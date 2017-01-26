@@ -3,6 +3,10 @@
 import os
 import re
 
+import numpy
+
+import clusters
+import nmf
 
 CORPUSPATH = None
 
@@ -40,7 +44,7 @@ def get_words():
     return allwords, articlewords, articletitles
 
 
-def makematrix(allw: list, articlew: list):
+def makematrix(allw: list = None, articlew: list = None):
     """Converting the arrays to a matrix."""
     wordvec = []
 
@@ -55,19 +59,75 @@ def makematrix(allw: list, articlew: list):
     return wordmatrix, wordvec
 
 
+def showfeatures(w, h, titles, wordvec, out='features.txt'):
+    outfile = open(out, 'w')
+    pc, wc = numpy.shape(h)
+    toppatterns = [[] for i in range(len(titles))]
+    patternnames = []
+
+    # Loop over all the features
+    for i in range(pc):
+        slist = []
+        # Create a list of words and their weights
+        for j in range(wc):
+            slist.append((h[i, j], wordvec[j]))
+        # Reverse sort the word list
+        slist.sort()
+        slist.reverse()
+
+        # Print the first six elements
+        n = [s[1] for s in slist[0:6]]
+        outfile.write(str(n) + '\n')
+        patternnames.append(n)
+
+        # Create a list of articles for this feature
+        flist = []
+        for j in range(len(titles)):
+            # Add the article with its weight
+            flist.append((w[j, i], titles[j]))
+            toppatterns[j].append((w[j, i], i, titles[j]))
+
+        # Reverse sort the list
+        flist.sort()
+        flist.reverse()
+
+        # Show the top 3 articles
+        for f in flist[0:3]:
+            outfile.write(str(f) + '\n')
+        outfile.write('\n')
+
+    outfile.close()
+    # Return the pattern names for later use
+    return toppatterns, patternnames
+
+
 def main():
     global CORPUSPATH
-    _ = '/home/dominik/Desktop/wiki/wikipedia/'
+    # _ = '/home/dominik/Desktop/wiki/wikipedia/'
+    _ = '/home/dominik/Desktop/wiki/bla/'
     corpus_path = os.path.normpath(os.path.abspath(_))
     if not os.path.isdir(corpus_path):
         raise ValueError(corpus_path)
     CORPUSPATH = corpus_path
+
     allwords, articlewords, articletitles = get_words()
 
-    return makematrix(allwords, articlewords)
+    wordmatrix, wordvec = makematrix(allwords, articlewords)
+
+    print(wordvec[0:10])
+    print(wordmatrix[1][0:10])
+
+    # clusters.hcluster(wordmatrix)
+    # clusters.drawdendrogram(clust, artt, jpeg='news.jpg')
+
+    print(wordmatrix)
+    v = numpy.matrix(wordmatrix)
+    print(v)
+    weights, feat = nmf.factorize(v, pc=20, iter=50)
+
+    print(feat)
+    topp, pn = showfeatures(weights, feat, articletitles, wordvec)
 
 
 if __name__ == "__main__":
-    wordmatrix, wordvec = main()
-    print(wordvec[0:10])
-    print(wordmatrix[1][0:10])
+    main()
