@@ -101,6 +101,23 @@ def showfeatures(w, h, titles, wordvec, out='features.txt'):
     return toppatterns, patternnames
 
 
+def showarticles(titles, toppatterns, patternnames, out='articles.txt'):
+    outfile = open(out, 'w')
+    # Loop over all the articles
+    for j in range(len(titles)):
+        outfile.write(titles[j] + '\n')
+        # Get the top features for this article and
+        # reverse sort them
+        toppatterns[j].sort()
+        toppatterns[j].reverse()
+        # Print the top three patterns
+        for i in range(3):
+            outfile.write(str(toppatterns[j][i][0]) + ' ' +
+                          str(patternnames[toppatterns[j][i][1]]) + '\n')
+        outfile.write('\n')
+    outfile.close()
+
+
 def main():
     global CORPUSPATH
     # _ = '/home/dominik/Desktop/wiki/wikipedia/'
@@ -114,19 +131,18 @@ def main():
 
     wordmatrix, wordvec = makematrix(allwords, articlewords)
 
-    print(wordvec[0:10])
-    print(wordmatrix[1][0:10])
-
     # clusters.hcluster(wordmatrix)
     # clusters.drawdendrogram(clust, artt, jpeg='news.jpg')
+    # print(wordmatrix)
 
-    print(wordmatrix)
     v = numpy.matrix(wordmatrix)
     print(v)
     weights, feat = nmf.factorize(v, pc=20, iter=50)
 
     print(feat)
     topp, pn = showfeatures(weights, feat, articletitles, wordvec)
+
+    showarticles(articletitles, topp, pn)
 
 
 if __name__ == "__main__":
