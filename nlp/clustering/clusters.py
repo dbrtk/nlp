@@ -4,6 +4,8 @@ import random
 
 from PIL import Image, ImageDraw
 
+VERBOSE = 0
+
 
 def pearson(v1, v2):
     """Defining closeness between 2 lists of numbers. It uses the Pearson
@@ -203,7 +205,8 @@ def kcluster(rows, distance=pearson, k=4):
                  for i in range(len(rows[0]))] for j in range(k)]
     lastmatches = None
     for t in range(100):
-        print('Iteration %d' % t)
+        if VERBOSE:
+            print('Iteration %d' % t)
         bestmatches = [[] for i in range(k)]
         # Find which centroid is the closest for each row
         for j in range(len(rows)):
@@ -295,7 +298,8 @@ def scaledown(data, distance=pearson, rate=0.01):
 
                 # Keep track of the total error
                 totalerror += abs(errorterm)
-        print(totalerror)
+        if VERBOSE:
+            print(totalerror)
 
         # If the answer got worse by moving the points, we are done
         if lasterror and lasterror < totalerror:
