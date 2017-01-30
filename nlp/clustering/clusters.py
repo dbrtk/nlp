@@ -1,10 +1,12 @@
 
 from math import sqrt
+import pprint
 import random
 
 from PIL import Image, ImageDraw
 
 VERBOSE = 0
+PRINTER = pprint.PrettyPrinter(indent=4)
 
 
 def pearson(v1, v2):
@@ -92,7 +94,7 @@ def hcluster(rows, distance=pearson):
 
 
 def readfile(filename):
-    """Reading the file."""
+    """Reading the matrix file."""
     lines = None
     with open(filename) as _file:
         lines = [line for line in _file.readlines()]
@@ -186,6 +188,30 @@ def drawdendrogram(clust, labels, jpeg='clusters.jpg'):
     # Draw the first node
     drawnode(draw, clust, 10, (h / 2), scaling, labels)
     img.save(jpeg, 'JPEG')
+
+
+def hcluster_to_json(clust):
+    """Turning a cluster to a json object with subobjects. 
+    Example of the returned object:
+    {
+        name: 'DendoPferdle',
+        children: [
+            {
+                name: "first DendoPferdle's child",
+                children: [
+                    {...}, {...}, {...}
+                ]
+            }, {
+                name: "second DendoPferdle's child",
+                children: [
+                    {...}, {...}, {...}
+                ]
+            }
+        ]
+    }
+    """
+
+    pass
 
 
 def rotatematrix(data):
@@ -327,27 +353,27 @@ def draw2d(data, labels, jpeg='mds2d.jpg'):
 def main():
 
     # blognames,words,data
-    # rows, cols, data = readfile('data/blogdata.txt')
+    rows, cols, data = readfile('data/blogdata.txt')
 
-    # clust = hcluster(data)
+    clust = hcluster(data)
     # printclust(clust, labels=rows)
-    # drawdendrogram(clust, rows, jpeg='blogclust.jpg')
+    drawdendrogram(clust, rows, jpeg='blogclust.jpg')
 
-    # rdata = rotatematrix(data)
-    # wordclust = hcluster(rdata)
-    # drawdendrogram(wordclust, labels=cols, jpeg='wordclust.jpg')
+    rdata = rotatematrix(data)
+    wordclust = hcluster(rdata)
+    drawdendrogram(wordclust, labels=cols, jpeg='wordclust.jpg')
 
     # k-means clustering
-    # kclust = kcluster(data, k=10)
-    # print_clusters(kclust, rows)
+    kclust = kcluster(data, k=10)
+    print_clusters(kclust, rows)
 
     # wants, people, data = readfile('data/zebo.txt')
     # clust = hcluster(data, distance=tanimoto)
     # drawdendrogram(clust, wants)
 
-    blognames, words, data = readfile('data/blogdata.txt')
-    coords = scaledown(data)
-    draw2d(coords, blognames, jpeg='blogs2d.jpg')
+    # blognames, words, data = readfile('data/blogdata.txt')
+    # coords = scaledown(data)
+    # draw2d(coords, blognames, jpeg='blogs2d.jpg')
 
 
 if __name__ == "__main__":

@@ -131,18 +131,15 @@ def main():
 
     wordmatrix, wordvec = makematrix(allwords, articlewords)
 
-    # clusters.hcluster(wordmatrix)
-    # clusters.drawdendrogram(clust, artt, jpeg='news.jpg')
-    # print(wordmatrix)
+    clust = clusters.hcluster(wordmatrix)
+    clusters.drawdendrogram(clust, articletitles, jpeg='wiki.jpg')
 
-    v = numpy.matrix(wordmatrix)
-    print(v)
-    weights, feat = nmf.factorize(v, pc=20, iter=50)
-
-    print(feat)
-    topp, pn = showfeatures(weights, feat, articletitles, wordvec)
-
-    showarticles(articletitles, topp, pn)
+    # v = numpy.matrix(wordmatrix)
+    # print(v)
+    # weights, feat = nmf.factorize(v, pc=20, iter=50)
+    # print(feat)
+    # topp, pn = showfeatures(weights, feat, articletitles, wordvec)
+    # showarticles(articletitles, topp, pn)
 
 
 if __name__ == "__main__":
