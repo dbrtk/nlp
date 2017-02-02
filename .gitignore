@@ -1,0 +1,7 @@
+
+**/.pyc
+nlp.egg-*
+**/__pycache__
+**/*.jpg
+**/*.jpeg
+**/*.png
