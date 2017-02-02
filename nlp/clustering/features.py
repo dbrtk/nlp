@@ -2,13 +2,15 @@
 
 import os
 import re
+import pprint
 
 import numpy
 
-import clusters
-import nmf
+from . import clusters
+from . import nmf
 
 CORPUSPATH = None
+PRINTER = pprint.PrettyPrinter(indent=4)
 
 
 def separatewords(text):
@@ -130,16 +132,20 @@ def main():
     allwords, articlewords, articletitles = get_words()
 
     wordmatrix, wordvec = makematrix(allwords, articlewords)
-
     clust = clusters.hcluster(wordmatrix)
-    clusters.drawdendrogram(clust, articletitles, jpeg='wiki.jpg')
 
+    print('aojsdoiajd')
+    # clusters.drawdendrogram(clust, articletitles, jpeg='wiki.jpg')
+    clustjson = clusters.hcluster_to_json(clust, labels=articletitles)
+    PRINTER.pprint(clustjson)
+    print(clustjson)
     # v = numpy.matrix(wordmatrix)
     # print(v)
     # weights, feat = nmf.factorize(v, pc=20, iter=50)
     # print(feat)
     # topp, pn = showfeatures(weights, feat, articletitles, wordvec)
     # showarticles(articletitles, topp, pn)
+    return clustjson
 
 
 if __name__ == "__main__":

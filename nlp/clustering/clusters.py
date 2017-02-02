@@ -58,7 +58,17 @@ class bicluster:
 
 
 def hcluster(rows, distance=pearson):
-    """Storing the distances."""
+    """Hierarchical clustering builds up a hierarchy of groups by
+    continuously merging the two most similar groups. Each of these
+    groups starts as a single item, in this case an individual
+    blog. In each iteration this method calculates the distances
+    between every pair of groups, and the closest ones are merged
+    together to form a new group.
+
+
+    Creating and storing the distances.
+
+    """
     distances = {}
     currentclustid = -1
     # Clusters are initially just the rows
@@ -120,14 +130,14 @@ def printclust(clust, labels=None, n=0):
         print('-')
     else:
         # positive id means that this is an endpoint
-        if labels == None:
+        if labels is None:
             print(clust.id)
         else:
             print(labels[clust.id])
     # now print the right and left branches
-    if clust.left != None:
+    if clust.left is not None:
         printclust(clust.left, labels=labels, n=n + 1)
-    if clust.right != None:
+    if clust.right is not None:
         printclust(clust.right, labels=labels, n=n + 1)
 
 
@@ -190,8 +200,8 @@ def drawdendrogram(clust, labels, jpeg='clusters.jpg'):
     img.save(jpeg, 'JPEG')
 
 
-def hcluster_to_json(clust):
-    """Turning a cluster to a json object with subobjects. 
+def hcluster_to_json(clust, labels=None):
+    """Turning a cluster to a json object with children.
     Example of the returned object:
     {
         name: 'DendoPferdle',
@@ -210,8 +220,35 @@ def hcluster_to_json(clust):
         ]
     }
     """
+    root = {}
 
-    pass
+    def processnode(node, parent: dict = None):
+        """Processing cluster nodes."""
+
+        obj = {} if parent else root
+
+        if node.id < 0:
+            # this is a branch
+            obj['type'] = 'branch'
+            obj['height'] = 0
+            # a branch should always have children
+            if 'children' not in obj:
+                obj['children'] = []
+            if parent:
+                parent['children'].append(obj)
+
+            processnode(node.left, parent=obj)
+            processnode(node.right, parent=obj)
+        else:
+            # this is an actual node (leaf)
+            obj['type'] = 'node'
+            obj['name'] = labels[node.id]
+
+            # a node always expects a parent
+            parent['children'].append(obj)
+
+    processnode(clust)
+    return root
 
 
 def rotatematrix(data):
@@ -289,8 +326,6 @@ def scaledown(data, distance=pearson, rate=0.01):
     # The real distances between every pair of items
     realdist = [[distance(data[i], data[j]) for j in range(n)]
                 for i in range(0, n)]
-
-    outersum = 0.0
 
     # Randomly initialize the starting points of the locations in 2D
     loc = [[random.random(), random.random()] for i in range(n)]
