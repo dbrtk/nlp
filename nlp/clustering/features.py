@@ -137,12 +137,15 @@ def main():
     print('aojsdoiajd')
     # clusters.drawdendrogram(clust, articletitles, jpeg='wiki.jpg')
     clustjson = clusters.hcluster_to_json(clust, labels=articletitles)
-    PRINTER.pprint(clustjson)
+
+    # PRINTER.pprint(clustjson)
+
     print(clustjson)
     # v = numpy.matrix(wordmatrix)
     # print(v)
     # weights, feat = nmf.factorize(v, pc=20, iter=50)
     # print(feat)
+    # print(weights)
     # topp, pn = showfeatures(weights, feat, articletitles, wordvec)
     # showarticles(articletitles, topp, pn)
     return clustjson

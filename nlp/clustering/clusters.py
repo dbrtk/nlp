@@ -222,32 +222,54 @@ def hcluster_to_json(clust, labels=None):
     """
     root = {}
 
-    def processnode(node, parent: dict = None):
+    h = getheight(clust) * 20
+    w = 1200
+    depth = getdepth(clust)
+    # width is fixed, so scale distances accordingly
+    scaling = float(w - 150) / depth
+
+    def processnode(node, x: int, y: int, scaling, parent: dict = None):
         """Processing cluster nodes."""
 
+        h1 = getheight(clust.left) * 20
+        h2 = getheight(clust.right) * 20
+        top = y - (h1 + h2) / 2
+        bottom = y + (h1 + h2) / 2
+
+        # Line length
+        ll = clust.distance * scaling
+
         obj = {} if parent else root
+
+        obj.update(dict(x=int(x), y=int(y), id=node.id))
 
         if node.id < 0:
             # this is a branch
             obj['type'] = 'branch'
-            obj['height'] = 0
+
             # a branch should always have children
             if 'children' not in obj:
                 obj['children'] = []
             if parent:
                 parent['children'].append(obj)
 
-            processnode(node.left, parent=obj)
-            processnode(node.right, parent=obj)
+            processnode(
+                node.left, x=x + ll, y=top + h1 / 2,
+                scaling=scaling, parent=obj)
+            processnode(
+                node.right, x=x + ll, y=bottom - h2 / 2,
+                scaling=scaling, parent=obj)
         else:
             # this is an actual node (leaf)
+            obj['size'] = sum(node.vec)
             obj['type'] = 'node'
             obj['name'] = labels[node.id]
 
             # a node always expects a parent
             parent['children'].append(obj)
 
-    processnode(clust)
+    processnode(clust, x=10, y=h / 2, scaling=scaling)
+
     return root
 
 
