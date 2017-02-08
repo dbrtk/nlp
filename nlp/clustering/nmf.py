@@ -48,5 +48,8 @@ if __name__ == '__main__':
 
     m1 = numpy.matrix([[1, 2, 3], [4, 5, 6]])
     m2 = numpy.matrix([[1, 2], [3, 4], [5, 6]])
-
+    print(m1)
+    print(m2)
     w, h = factorize(m1 * m2, pc=3, iter=100)
+    print(w)
+    print(h)

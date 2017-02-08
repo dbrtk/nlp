@@ -1,5 +1,4 @@
 
-
 import os
 import re
 import pprint
@@ -120,35 +119,60 @@ def showarticles(titles, toppatterns, patternnames, out='articles.txt'):
     outfile.close()
 
 
-def main():
-    global CORPUSPATH
-    # _ = '/home/dominik/Desktop/wiki/wikipedia/'
-    _ = '/home/dominik/Desktop/wiki/bla/'
-    corpus_path = os.path.normpath(os.path.abspath(_))
-    if not os.path.isdir(corpus_path):
-        raise ValueError(corpus_path)
-    CORPUSPATH = corpus_path
+def circular_tree(path_to_data):
+    set_corpus('/home/dominik/Desktop/wiki/tiny/')
 
     allwords, articlewords, articletitles = get_words()
 
     wordmatrix, wordvec = makematrix(allwords, articlewords)
     clust = clusters.hcluster(wordmatrix)
 
-    print('aojsdoiajd')
     # clusters.drawdendrogram(clust, articletitles, jpeg='wiki.jpg')
-    clustjson = clusters.hcluster_to_json(clust, labels=articletitles)
+    clustjson, depth = clusters.hcluster_to_json(clust, labels=articletitles)
 
-    # PRINTER.pprint(clustjson)
+    v = numpy.matrix(wordmatrix)
+    print(v)
+    weights, feat = nmf.factorize(v, pc=20, iter=50)
+    print(feat)
+    print(weights)
 
-    print(clustjson)
-    # v = numpy.matrix(wordmatrix)
-    # print(v)
-    # weights, feat = nmf.factorize(v, pc=20, iter=50)
-    # print(feat)
-    # print(weights)
-    # topp, pn = showfeatures(weights, feat, articletitles, wordvec)
-    # showarticles(articletitles, topp, pn)
+    topp, pn = showfeatures(weights, feat, articletitles, wordvec)
+    showarticles(articletitles, topp, pn)
+
     return clustjson
+
+
+def set_corpus(path):
+    """Setting up the corpus path."""
+    global CORPUSPATH
+    corpus_path = os.path.normpath(os.path.abspath(path))
+    if not os.path.isdir(corpus_path):
+        raise ValueError(corpus_path)
+    CORPUSPATH = corpus_path
+
+
+def main():
+    # _ = '/home/dominik/Desktop/wiki/wikipedia/'
+    _ = '/home/dominik/Desktop/wiki/tiny/'
+
+    set_corpus(_)
+    allwords, articlewords, articletitles = get_words()
+
+    wordmatrix, wordvec = makematrix(allwords, articlewords)
+
+    # clust = clusters.hcluster(wordmatrix)
+    # clustjson, depth = clusters.hcluster_to_json(clust, labels=articletitles)
+
+    v = numpy.matrix(wordmatrix)
+    print(v)
+    weights, feat = nmf.factorize(v, pc=20, iter=100)
+
+    print(feat)
+    print(weights)
+
+    topp, pn = showfeatures(weights, feat, articletitles, wordvec)
+
+    showarticles(articletitles, topp, pn)
 
 
 if __name__ == "__main__":

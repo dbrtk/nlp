@@ -241,12 +241,12 @@ def hcluster_to_json(clust, labels=None):
 
         obj = {} if parent else root
 
-        obj.update(dict(x=int(x), y=int(y), id=node.id))
+        # obj.update(dict(x=int(x), y=int(y), id=node.id))
 
         if node.id < 0:
             # this is a branch
             obj['type'] = 'branch'
-
+            # obj['name'] = 'branch'
             # a branch should always have children
             if 'children' not in obj:
                 obj['children'] = []
@@ -270,7 +270,7 @@ def hcluster_to_json(clust, labels=None):
 
     processnode(clust, x=10, y=h / 2, scaling=scaling)
 
-    return root
+    return root, depth
 
 
 def rotatematrix(data):
@@ -317,7 +317,6 @@ def kcluster(rows, distance=pearson, k=4):
                 for j in range(len(avgs)):
                     avgs[j] /= len(bestmatches[i])
                 clusters[i] = avgs
-
     return bestmatches
 
 
@@ -326,6 +325,14 @@ def print_clusters(kclust, rows):
     for k in kclust:
         print('\n')
         print([rows[_] for _ in k])
+
+
+def get_clusters(kclust, rows):
+    """Getting the titles for the clusters."""
+    out = []
+    for k in kclust:
+        out.append([rows[_] for _ in k])
+    return out
 
 
 def tanimoto(v1, v2):
@@ -412,15 +419,16 @@ def main():
     # blognames,words,data
     rows, cols, data = readfile('data/blogdata.txt')
 
-    clust = hcluster(data)
-    # printclust(clust, labels=rows)
-    drawdendrogram(clust, rows, jpeg='blogclust.jpg')
+    # clust = hcluster(data)
+    # # printclust(clust, labels=rows)
+    # drawdendrogram(clust, rows, jpeg='blogclust.jpg')
 
-    rdata = rotatematrix(data)
-    wordclust = hcluster(rdata)
-    drawdendrogram(wordclust, labels=cols, jpeg='wordclust.jpg')
+    # rdata = rotatematrix(data)
+    # wordclust = hcluster(rdata)
+    # drawdendrogram(wordclust, labels=cols, jpeg='wordclust.jpg')
 
     # k-means clustering
+
     kclust = kcluster(data, k=10)
     print_clusters(kclust, rows)
 
