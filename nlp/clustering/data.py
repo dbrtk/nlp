@@ -1,0 +1,162 @@
+
+import os
+import pickle
+
+import numpy
+
+
+from nlp.clustering import features, nmf
+
+
+MATRIX_FILES = [
+
+    'allwords', 'docwords', 'doctitles',
+
+    'wordmatrix', 'wordvec',
+
+    'vectors',
+
+    'weights', 'feat',
+
+    'toppatterns', 'patternnames'
+]
+
+
+class CorpusMatrix(object):
+
+    @property
+    def allwords(self):
+
+        return self.load_array('allwords', with_numpy=False)
+
+    @property
+    def docwords(self):
+
+        return self.load_array('docwords', with_numpy=False)
+
+    @property
+    def doctitles(self):
+
+        return self.load_array('doctitles', with_numpy=False)
+
+    @property
+    def wordmatrix(self):
+
+        return self.load_array('wordmatrix', with_numpy=False)
+
+    @property
+    def wordvec(self):
+
+        return self.load_array('wordvec', with_numpy=False)
+
+    @property
+    def vectors(self):
+
+        return self.load_array('vectors')
+
+    @property
+    def weights(self):
+
+        return self.load_array('weights')
+
+    @property
+    def feat(self):
+
+        return self.load_array('feat')
+
+    def __init__(self, path: str = None):
+        """
+        """
+        path = os.path.abspath(path)
+        if not os.path.isdir(path):
+            raise ValueError(path)
+
+        matrix_path = os.path.normpath(os.path.join(path, 'matrix'))
+        corpus_path = os.path.normpath(os.path.join(path, 'corpus'))
+
+        if not os.path.isdir(corpus_path):
+            raise RuntimeError(corpus_path)
+
+        self.path = dict(path=path, matrix=matrix_path, corpus=corpus_path)
+
+        # setting up the path to the corpus on the level of features module.
+        features.set_corpus(self.path['corpus'])
+
+        if not os.path.isdir(matrix_path):
+            self.mkdir_mtrx()
+
+        if not self.file_integrity_check(matrix_path):
+            self.make_matrices()
+
+    def file_path(self, filename):
+
+        if filename not in MATRIX_FILES:
+            raise ValueError(filename)
+        return os.path.normpath(
+            os.path.join(self.path['matrix'], '{}'.format(filename))
+        )
+
+    def mkdir_mtrx(self):
+        """
+        """
+        os.makedirs(os.path.join(self.path['matrix']))
+
+    def file_integrity_check(self, path):
+        """ Checking whether all files exist. """
+
+        return all(os.path.isfile(self.file_path(_)) for _ in MATRIX_FILES)
+
+    def make_matrices(self):
+        """ Making and saving to disk all matrices. """
+        self.__get_words()
+        self.__makematrix()
+        self.__make_vectors()
+        self.__factorize()
+
+    def make_file(self, data: list, objname: str):
+        path = self.file_path(objname)
+
+        if isinstance(data, (numpy.ndarray, numpy.generic,)):
+            ext = 'npy'
+            numpy.save('{}.{}'.format(path, ext), data, fix_imports=False)
+        else:
+            ext = 'pickle'
+            pickle.dump(data, open('{}.{}'.format(path, ext), 'wb+'))
+
+    def load_array(self, arrayname, with_numpy=True):
+
+        extension = 'npy' if with_numpy else 'pickle'
+        path = '{}.{}'.format(self.file_path(arrayname), extension)
+        if with_numpy:
+            return numpy.load(path)
+        else:
+            return pickle.load(open(path, 'rb'))
+
+    def __get_words(self):
+        """
+        """
+        for _ in zip(features.get_words(),
+                     ['allwords', 'docwords', 'doctitles']):
+            self.make_file(*_)
+
+    def __makematrix(self):
+
+        allwords = self.allwords
+        docwords = self.docwords
+
+        wordmatrix, wordvec = features.makematrix(allwords, docwords)
+
+        self.make_file(wordmatrix, 'wordmatrix')
+        self.make_file(wordvec, 'wordvec')
+
+    def __make_vectors(self):
+
+        wordmatrix = self.wordmatrix
+        v = numpy.matrix(wordmatrix)
+        self.make_file(v, 'vectors')
+
+    def __factorize(self):
+        vectors = self.vectors
+        weight, feat = nmf.factorize(vectors, pc=25, iter=50)
+        for _ in zip((weight, feat), ['weights', 'feat']):
+            self.make_file(*_)

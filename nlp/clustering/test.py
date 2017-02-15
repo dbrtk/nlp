@@ -5,8 +5,50 @@ import pprint
 import numpy
 
 from nlp.clustering import clusters, features, nmf, views
+from nlp.clustering.data import CorpusMatrix
+
 
 PRINTER = pprint.PrettyPrinter(indent=4)
+
+
+def get_features_old():
+
+    _ = '/home/dominik/Desktop/wiki/test/corpus'
+    features.set_corpus(_)
+
+    allwords, articlewords, articletitles = features.get_words()
+
+    wordmatrix, wordvec = features.makematrix(allwords, articlewords)
+
+    v = numpy.matrix(wordmatrix)
+    weights, feat = nmf.factorize(v, pc=25, iter=50)
+
+    topp, pn = features.showfeatures(weights, feat, articletitles, wordvec)
+    features.showarticles(articletitles, topp, pn)
+
+
+def get_features_with_data():
+
+    _ = '/home/dominik/Desktop/wiki/test'
+    data = CorpusMatrix(path=_)
+
+    # features.set_corpus(_)
+
+    # allwords, articlewords, articletitles = features.get_words()
+
+    # wordmatrix, wordvec = features.makematrix(allwords, articlewords)
+
+    # v = numpy.matrix(wordmatrix)
+    # v = data.vectors
+    # print(v)
+    # weights, feat = nmf.factorize(v, pc=25, iter=50)
+
+    topp, pn = features.showfeatures(
+        data.weights, data.feat, data.doctitles, data.wordvec)
+    # # features.showarticles(articletitles, topp, pn)
+
+    print(topp)
+    print(pn)
 
 
 def get_features():
@@ -49,5 +91,5 @@ def kmeans_clust():
 
 if __name__ == "__main__":
 
-    # kmeans_clust()
-    get_features()
+    # get_features_old()
+    get_features_with_data()
