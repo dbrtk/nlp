@@ -85,8 +85,8 @@ class CorpusMatrix(object):
         if not os.path.isdir(matrix_path):
             self.mkdir_mtrx()
 
-        if not self.file_integrity_check(matrix_path):
-            self.make_matrices()
+        # if not self.file_integrity_check(matrix_path):
+        #     self.make_matrices()
 
     def file_path(self, filename):
 
@@ -127,6 +127,7 @@ class CorpusMatrix(object):
 
         extension = 'npy' if with_numpy else 'pickle'
         path = '{}.{}'.format(self.file_path(arrayname), extension)
+
         if with_numpy:
             return numpy.load(path)
         else:

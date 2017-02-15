@@ -45,8 +45,9 @@ def get_features_with_data():
 
     topp, pn = features.showfeatures(
         data.weights, data.feat, data.doctitles, data.wordvec)
-    # # features.showarticles(articletitles, topp, pn)
 
+    # # features.showarticles(articletitles, topp, pn)
+    print('DONE CALCULATING!')
     print(topp)
     print(pn)
 
