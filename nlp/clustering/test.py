@@ -1,13 +1,18 @@
 
 
+import pprint
+
 import numpy
 
 from nlp.clustering import clusters, features, nmf, views
 
+PRINTER = pprint.PrettyPrinter(indent=4)
+
 
 def get_features():
 
-    _ = '/home/dominik/Desktop/wiki/tiny/'
+    _ = '/home/dominik/Desktop/wiki/tinytiny/corpus/'
+    # _ = '/home/dominik/www/nlpdata/corpora/58a315fae032394f90e4b8f8/'
     features.set_corpus(_)
 
     allwords, articlewords, articletitles = features.get_words()
@@ -15,15 +20,26 @@ def get_features():
     wordmatrix, wordvec = features.makematrix(allwords, articlewords)
 
     v = numpy.matrix(wordmatrix)
-    weights, feat = nmf.factorize(v, pc=25, iter=50)
+    weights, feat = nmf.factorize(v, pc=20, iter=50)
 
-    topp, pn = features.showfeatures(weights, feat, articletitles, wordvec)
-    features.showarticles(articletitles, topp, pn)
+    json_obj, topp, pn = views.features_to_json(
+        weights, feat, articletitles, wordvec,
+        feature_words=10, docs_per_feature=10)
+
+    # topp, pn = features.showfeatures(
+    #     weights, feat, articletitles, wordvec, feature_words=10)
+
+    # features.showarticles(articletitles, topp, pn)
+
+    PRINTER.pprint(json_obj)
+
+    # docs = views.docs_to_json(articletitles, topp, pn, features_per_doc=5)
+    # PRINTER.pprint(docs)
 
 
 def kmeans_clust():
-
-    _ = '/home/dominik/Desktop/wiki/tiny/'
+    # _ = '/home/dominik/www/nlpdata/corpora/58a315fae032394f90e4b8f8/'
+    _ = '/home/dominik/Desktop/wiki/tinytiny/'
     kclust = views.kmeans_clust(_)
     print(kclust)
     for i in kclust:
