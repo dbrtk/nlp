@@ -18,8 +18,11 @@ MATRIX_FILES = [
     'vectors',
 
     'weights', 'feat',
+]
+TEMP_MATRICES = [
 
     'toppatterns', 'patternnames'
+
 ]
 
 
@@ -89,13 +92,20 @@ class CorpusMatrix(object):
     def __call__(self):
         """
         """
-        pass
+        if not self.file_integrity_check():
+            self.make_matrices()
 
     def call_factorize(self, iterate=50, feature_number=20):
         """ Removes the weights and features and call matrix.
         """
         self.delete_matrices('weights', 'feat')
         self.__factorize(iterate=iterate, feature_number=feature_number)
+
+    def get_feature_number(self):
+        """ Returns the number of features that has been retrieved from the
+            corpus.
+        """
+        return len(self.feat)
 
     def file_path(self, filename):
 
@@ -106,14 +116,14 @@ class CorpusMatrix(object):
         )
 
     def mkdir_mtrx(self):
-        """
-        """
+        """ Making the directory for matrix files. """
         os.makedirs(os.path.join(self.path['matrix']))
 
-    def file_integrity_check(self, path):
+    def file_integrity_check(self):
         """ Checking whether all files exist. """
 
-        return all(os.path.isfile(self.file_path(_)) for _ in MATRIX_FILES)
+        files = [self._matrix_name(_) for _ in self._matrix_files()]
+        return all(_ in files for _ in MATRIX_FILES)
 
     def make_matrices(self):
         """ Making and saving to disk all matrices. """
@@ -123,6 +133,9 @@ class CorpusMatrix(object):
         self.__factorize()
 
     def make_file(self, data: list, objname: str):
+        """ Creating a file that will hold an array, numpy array type or
+            a dict.
+        """
         path = self.file_path(objname)
 
         if isinstance(data, (numpy.ndarray, numpy.generic,)):
@@ -133,7 +146,7 @@ class CorpusMatrix(object):
             pickle.dump(data, open('{}.{}'.format(path, ext), 'wb+'))
 
     def load_array(self, arrayname, with_numpy=True):
-
+        """ Loading an array from file. """
         extension = 'npy' if with_numpy else 'pickle'
         path = '{}.{}'.format(self.file_path(arrayname), extension)
 
@@ -143,8 +156,6 @@ class CorpusMatrix(object):
             return pickle.load(open(path, 'rb'))
 
     def __get_words(self):
-        """
-        """
         for _ in zip(features.get_words(),
                      ['allwords', 'docwords', 'doctitles']):
             self.make_file(*_)
@@ -167,9 +178,7 @@ class CorpusMatrix(object):
 
     def __factorize(self, iterate=50, feature_number=25):
         vectors = self.vectors
-
         weight, feat = nmf.factorize(vectors, pc=feature_number, iter=iterate)
-
         for _ in zip((weight, feat), ['weights', 'feat']):
             self.make_file(*_)
 

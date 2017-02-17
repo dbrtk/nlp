@@ -29,7 +29,8 @@ def get_features_old():
 
 def get_features_with_data():
 
-    _ = '/home/dominik/Desktop/wiki/test'
+    # _ = '/home/dominik/Desktop/wiki/test'
+    _ = '/home/dominik/www/nlpdata/corpora/58a60c9be032396727a353cf'
     data = CorpusMatrix(path=_)
 
     # features.set_corpus(_)
@@ -105,5 +106,5 @@ def purge():
 
 if __name__ == "__main__":
 
-    # get_features_old()
-    purge()
+    get_features_with_data()
+    # purge()

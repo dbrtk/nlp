@@ -45,14 +45,6 @@ def independent_features(corpus_path: str = None, features_count: int = 10):
     features.showarticles(articletitles, topp, pn)
 
 
-def new_features_to_json(top_patterns: list = None, pattern_names: list = None,
-                         docs: list = None):
-
-    out_obj = []
-    for idx, value in enumerate(top_patterns):
-        pass
-
-
 def features_to_json(w, h, titles, wordvec, feature_words: int = 6,
                      docs_per_feature: int = 3):
     out = []
@@ -120,13 +112,15 @@ def docs_to_json(titles, toppatterns, patternnames, features_per_doc=3):
 
 
 def features_and_docs(path: str = None,
-                      feature_number: int = 10,
+                      feature_number: int = 25,
                       feature_words: int = 6,
                       docs_per_feature: int = 3,
                       features_per_doc: int = 3):
-    """
-    """
+    """ Returning features and docs. """
     data = CorpusMatrix(path=path)
+    data()
+    if data.get_feature_number() != feature_number:
+        data.call_factorize(feature_number=feature_number)
 
     json_obj, topp, pn = features_to_json(
         data.weights, data.feat, data.doctitles, data.wordvec,
@@ -134,5 +128,9 @@ def features_and_docs(path: str = None,
 
     docs_obj = docs_to_json(data.doctitles, topp, pn,
                             features_per_doc=features_per_doc)
-
     return json_obj, docs_obj
+
+
+def get_features_count(path: str = None):
+    """ Returns the feature number that have been computed for this corpus. """
+    return CorpusMatrix(path=path).get_feature_number()
