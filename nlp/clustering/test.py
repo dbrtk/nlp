@@ -43,13 +43,20 @@ def get_features_with_data():
     # print(v)
     # weights, feat = nmf.factorize(v, pc=25, iter=50)
 
-    topp, pn = features.showfeatures(
+    json_obj, topp, pn = views.features_to_json(
         data.weights, data.feat, data.doctitles, data.wordvec)
 
     # # features.showarticles(articletitles, topp, pn)
     print('DONE CALCULATING!')
     print(topp)
     print(pn)
+    PRINTER.pprint(json_obj)
+
+    data.call_factorize(feature_number=20, iterate=10)
+    print('should have 20 features')
+    json_obj, topp, pn = views.features_to_json(
+        data.weights, data.feat, data.doctitles, data.wordvec)
+    PRINTER.pprint(json_obj)
 
 
 def get_features():
@@ -90,7 +97,13 @@ def kmeans_clust():
         print('\n')
 
 
+def purge():
+    data = CorpusMatrix(path='/home/dominik/Desktop/wiki/tinytiny/')
+    # data.purge_matrixdir()
+    data.delete_matrices('weights', 'feat')
+
+
 if __name__ == "__main__":
 
     # get_features_old()
-    get_features_with_data()
+    purge()

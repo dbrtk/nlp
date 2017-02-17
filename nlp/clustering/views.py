@@ -3,6 +3,7 @@
 import numpy
 
 from . import clusters, features, nmf
+from .data import CorpusMatrix
 
 
 def simple_dendogram():
@@ -116,3 +117,22 @@ def docs_to_json(titles, toppatterns, patternnames, features_per_doc=3):
             doc['feature'] = patternnames[toppatterns[j][i][1]]
         output.append(doc)
     return output
+
+
+def features_and_docs(path: str = None,
+                      feature_number: int = 10,
+                      feature_words: int = 6,
+                      docs_per_feature: int = 3,
+                      features_per_doc: int = 3):
+    """
+    """
+    data = CorpusMatrix(path=path)
+
+    json_obj, topp, pn = features_to_json(
+        data.weights, data.feat, data.doctitles, data.wordvec,
+        feature_words=feature_words, docs_per_feature=docs_per_feature)
+
+    docs_obj = docs_to_json(data.doctitles, topp, pn,
+                            features_per_doc=features_per_doc)
+
+    return json_obj, docs_obj

@@ -1,4 +1,5 @@
 
+import glob
 import os
 import pickle
 
@@ -85,8 +86,16 @@ class CorpusMatrix(object):
         if not os.path.isdir(matrix_path):
             self.mkdir_mtrx()
 
-        # if not self.file_integrity_check(matrix_path):
-        #     self.make_matrices()
+    def __call__(self):
+        """
+        """
+        pass
+
+    def call_factorize(self, iterate=50, feature_number=20):
+        """ Removes the weights and features and call matrix.
+        """
+        self.delete_matrices('weights', 'feat')
+        self.__factorize(iterate=iterate, feature_number=feature_number)
 
     def file_path(self, filename):
 
@@ -156,8 +165,34 @@ class CorpusMatrix(object):
         v = numpy.matrix(wordmatrix)
         self.make_file(v, 'vectors')
 
-    def __factorize(self):
+    def __factorize(self, iterate=50, feature_number=25):
         vectors = self.vectors
-        weight, feat = nmf.factorize(vectors, pc=25, iter=50)
+
+        weight, feat = nmf.factorize(vectors, pc=feature_number, iter=iterate)
+
         for _ in zip((weight, feat), ['weights', 'feat']):
             self.make_file(*_)
+
+    def _matrix_files(self):
+        return glob.glob(os.path.normpath(
+            os.path.join(self.path.get('matrix'), '*')))
+
+    def _matrix_name(self, path):
+        """ Given a path, returns the name of the matrix. """
+        return path.split('/')[-1].split('.')[0]
+
+    def purge_matrixdir(self):
+        files = self._matrix_files()
+        print(files)
+
+        for item in files:
+            print(item)
+
+    def delete_matrices(self, *args):
+        """
+        """
+        files = self._matrix_files()
+        for item in files:
+            matrix_name = self._matrix_name(item)
+            if matrix_name in args:
+                os.remove(item)
