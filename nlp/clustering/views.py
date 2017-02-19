@@ -82,7 +82,7 @@ def features_to_json(w, h, titles, wordvec, feature_words: int = 6,
         flist.reverse()
 
         # Show the top 3 articles
-        f_obj['docs'] = list(dict(weight=_[0], doc=_[1])
+        f_obj['docs'] = list(dict(weight=_[0], dataid=_[1])
                              for _ in flist[0:docs_per_feature])
 
         # for f in flist[0:docs_per_feature]:
@@ -98,7 +98,7 @@ def docs_to_json(titles, toppatterns, patternnames, features_per_doc=3):
     output = []
     # Loop over all the articles
     for j in range(len(titles)):
-        doc = dict(title=titles[j])
+        doc = dict(dataid=titles[j])
         # Get the top features for this article and
         # reverse sort them
         toppatterns[j].sort()
@@ -128,6 +128,7 @@ def features_and_docs(path: str = None,
 
     docs_obj = docs_to_json(data.doctitles, topp, pn,
                             features_per_doc=features_per_doc)
+
     return json_obj, docs_obj
 
 
