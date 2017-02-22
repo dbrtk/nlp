@@ -14,12 +14,6 @@ destination = 'LGA'
 
 
 flights = {}
-with open('data/schedule.txt', 'r') as _file:
-    for _line in _file.readlines():
-        origin, dest, depart, arrive, price = _line.strip().split(',')
-        flights.setdefault((origin, dest), [])
-        # Add details to the list of possible flights
-        flights[(origin, dest)].append((depart, arrive, int(price)))
 
 
 def getminutes(t):
@@ -44,7 +38,7 @@ def schedulecost(sol):
     totalprice = 0
     latestarrival = 0
     earliestdep = 24 * 60
-    # print('sol is: {}'.format(sol))
+    print('sol is: {}'.format(sol))
     for d in range(int(len(sol) / 2)):
         # Get the inbound and outbound flights
         origin = people[d][1]
@@ -122,6 +116,8 @@ def annealingoptimize(domain, costf, T=10000.0, cool=0.95, step=1):
     # Initialize the values randomly
     vec = [float(random.randint(domain[i][0], domain[i][1]))
            for i in range(len(domain))]
+    print(vec)
+    print(domain)
     while T > 0.1:
         # Choose one of the indices
         i = random.randint(0, len(domain) - 1)
@@ -131,6 +127,7 @@ def annealingoptimize(domain, costf, T=10000.0, cool=0.95, step=1):
         # Create a new list with one of the values changed
         vecb = vec[:]
         vecb[i] += _dir
+
         if vecb[i] < domain[i][0]:
             vecb[i] = domain[i][0]
         elif vecb[i] > domain[i][1]:
@@ -138,6 +135,37 @@ def annealingoptimize(domain, costf, T=10000.0, cool=0.95, step=1):
         # Calculate the current cost and the new cost
         ea = costf(vec)
         eb = costf(vecb)
+        p = pow(math.e, (-eb - ea) / T)
+
+        # Is it better, or does it make the probability
+        # cutoff?
+        if (eb < ea or random.random() < p):
+            vec = vecb
+        # Decrease the temperature
+        T = T * cool
+    return vec
+
+
+def annealing_features(vec, wh, domain, costf, T=10000.0, cool=0.95, step=1):
+    """ Annealing method designed to work with the factorization algorithm. """
+    while T > 0.1:
+        # Choose one of the indices
+        i = random.randint(0, len(domain) - 1)
+        # Choose a direction to change it
+        _dir = random.randint(-step, step)
+
+        # Create a new list with one of the values changed
+        vecb = vec[:]
+        vecb[i] += _dir
+
+        if vecb[i] < domain[i][0]:
+            vecb[i] = domain[i][0]
+        elif vecb[i] > domain[i][1]:
+            vecb[i] = domain[i][1]
+        # Calculate the current cost and the new cost
+
+        ea = costf(vec, wh)
+        eb = costf(vecb, wh)
         p = pow(math.e, (-eb - ea) / T)
 
         # Is it better, or does it make the probability
@@ -198,3 +226,19 @@ def geneticoptimize(domain, costf, popsize=50, step=1,
         # Print current best score
         print(scores[0][0])
     return scores[0][1]
+
+
+if __name__ == '__main__':
+
+    with open('data/schedule.txt', 'r') as _file:
+        for _line in _file.readlines():
+            origin, dest, depart, arrive, price = _line.strip().split(',')
+            flights.setdefault((origin, dest), [])
+            # Add details to the list of possible flights
+            flights[(origin, dest)].append((depart, arrive, int(price)))
+
+    domain = [(0, 8)] * (len(people) * 2)
+    s = annealingoptimize(domain, schedulecost)
+
+    schedulecost(s)
+    printschedule(s)

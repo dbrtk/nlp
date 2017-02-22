@@ -52,5 +52,5 @@ setup(
 
     packages=find_packages(include=['nlp']),
 
-    install_requires=['numpy', 'nltk', 'Pillow']
+    install_requires=['numpy', 'scipy', 'nltk', 'Pillow']
 )
