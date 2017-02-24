@@ -30,7 +30,7 @@ def get_features_old():
 def get_features_with_data():
 
     # _ = '/home/dominik/Desktop/wiki/test'
-    _ = '/home/dominik/www/nlpdata/corpora/58a60c9be032396727a353cf'
+    _ = '/home/dominik/www/nlpdata/corpora/58b089d8e032396b01092385/'
     data = CorpusMatrix(path=_)
 
     # features.set_corpus(_)
@@ -44,20 +44,22 @@ def get_features_with_data():
     # print(v)
     # weights, feat = nmf.factorize(v, pc=25, iter=50)
 
-    json_obj, topp, pn = views.features_to_json(
-        data.weights, data.feat, data.doctitles, data.wordvec)
+    # json_obj, topp, pn = views.features_to_json(
+    #     data.weights, data.feat, data.doctitles, data.wordvec)
 
     # # features.showarticles(articletitles, topp, pn)
     print('DONE CALCULATING!')
-    print(topp)
-    print(pn)
-    PRINTER.pprint(json_obj)
+    # print(topp)
+    # print(pn)
 
-    data.call_factorize(feature_number=20, iterate=10)
+    # PRINTER.pprint(json_obj)
+    data()
+    data.call_factorize(feature_number=10, iterate=200)
     print('should have 20 features')
     json_obj, topp, pn = views.features_to_json(
         data.weights, data.feat, data.doctitles, data.wordvec)
     PRINTER.pprint(json_obj)
+    print(len(json_obj))
 
 
 def get_features():

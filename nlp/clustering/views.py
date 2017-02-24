@@ -119,7 +119,9 @@ def features_and_docs(path: str = None,
     """ Returning features and docs. """
     data = CorpusMatrix(path=path)
     data()
+
     if data.get_feature_number() != feature_number:
+        print(feature_number)
         data.call_factorize(feature_number=feature_number)
 
     json_obj, topp, pn = features_to_json(
@@ -135,3 +137,7 @@ def features_and_docs(path: str = None,
 def get_features_count(path: str = None):
     """ Returns the feature number that have been computed for this corpus. """
     return CorpusMatrix(path=path).get_feature_number()
+
+
+def get_matrices(path: str = None):
+    pass
