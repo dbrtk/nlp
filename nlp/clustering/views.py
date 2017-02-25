@@ -136,7 +136,7 @@ def features_and_docs(path: str = None,
 
 def get_features_count(path: str = None):
     """ Returns the feature number that have been computed for this corpus. """
-    return CorpusMatrix(path=path).get_feature_number()
+    return CorpusMatrix(path=path).available_feats
 
 
 def get_matrices(path: str = None):

@@ -59,34 +59,6 @@ def get_features_with_data(featcount: int = 5):
     print(len(json_obj))
 
 
-def get_features():
-
-    _ = '/home/dominik/Desktop/wiki/tinytiny/corpus/'
-    # _ = '/home/dominik/www/nlpdata/corpora/58a315fae032394f90e4b8f8/'
-    features.set_corpus(_)
-
-    allwords, articlewords, articletitles = features.get_words()
-
-    wordmatrix, wordvec = features.makematrix(allwords, articlewords)
-
-    v = numpy.matrix(wordmatrix)
-    weights, feat = nmf.factorize(v, pc=20, iter=50)
-
-    json_obj, topp, pn = views.features_to_json(
-        weights, feat, articletitles, wordvec,
-        feature_words=10, docs_per_feature=10)
-
-    # topp, pn = features.showfeatures(
-    #     weights, feat, articletitles, wordvec, feature_words=10)
-
-    # features.showarticles(articletitles, topp, pn)
-
-    PRINTER.pprint(json_obj)
-
-    # docs = views.docs_to_json(articletitles, topp, pn, features_per_doc=5)
-    # PRINTER.pprint(docs)
-
-
 def kmeans_clust():
     # _ = '/home/dominik/www/nlpdata/corpora/58a315fae032394f90e4b8f8/'
     _ = '/home/dominik/Desktop/wiki/tinytiny/'
@@ -103,7 +75,13 @@ def purge():
     data.delete_matrices('weights', 'feat')
 
 
+def count_feats():
+    _ = '/home/dominik/www/nlpdata/corpora/58b089d8e032396b01092385'
+    data = CorpusMatrix(path=_)
+    data.available_feats
+
+
 if __name__ == "__main__":
 
-    get_features_with_data()
-    # purge()
+    # get_features_with_data()
+    count_feats()

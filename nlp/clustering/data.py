@@ -81,6 +81,24 @@ class CorpusMatrix(object):
 
         return self.load_array('feat', featcount=self.featcount)
 
+    @property
+    def available_feats(self):
+        path = os.path.join(self.path.get('matrix'), 'wf')
+        dirs = os.listdir(path)
+        out = []
+        for _ in dirs:
+            self.featcount = _
+            if not int(_) == len(self.feat):
+                raise RuntimeError(self)
+            _path = os.path.join(path, _)
+            out.append(dict(
+                featcount=_,
+                path=_path,
+                feat=os.path.join(_path, 'feat.npy'),
+                weights=os.path.join(_path, 'weights.npy')
+            ))
+        return out
+
     def __init__(self, path: str = None, featcount: int = None):
         """
         """
@@ -174,13 +192,6 @@ class CorpusMatrix(object):
         else:
             ext = 'pickle'
             pickle.dump(data, open('{}.{}'.format(path, ext), 'wb+'))
-
-    def load_wh_array(self, arrayname, featcount: int = 10):
-
-        extension = 'npy'
-        path = '{}.{}'
-
-        return numpy.load(path)
 
     def load_array(self, arrayname, with_numpy=True, featcount: int = None):
         """ Loading an array from file. """
