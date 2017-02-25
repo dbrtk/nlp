@@ -432,11 +432,11 @@ def main():
     kclust = kcluster(data, k=10)
     print_clusters(kclust, rows)
 
-    # wants, people, data = readfile('data/zebo.txt')
+    # wants, people, data = readfile('txtdata/zebo.txt')
     # clust = hcluster(data, distance=tanimoto)
     # drawdendrogram(clust, wants)
 
-    # blognames, words, data = readfile('data/blogdata.txt')
+    # blognames, words, data = readfile('txtdata/blogdata.txt')
     # coords = scaledown(data)
     # draw2d(coords, blognames, jpeg='blogs2d.jpg')
 

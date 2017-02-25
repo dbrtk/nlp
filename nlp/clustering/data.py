@@ -17,6 +17,9 @@ MATRIX_FILES = [
 
     'vectors',
 
+    # 'weights', 'feat',
+]
+WH_FILES = [
     'weights', 'feat',
 ]
 TEMP_MATRICES = [
@@ -59,21 +62,33 @@ class CorpusMatrix(object):
         return self.load_array('vectors')
 
     @property
-    def weights(self):
+    def old_weights(self):
 
         return self.load_array('weights')
 
     @property
-    def feat(self):
+    def old_feat(self):
 
         return self.load_array('feat')
 
-    def __init__(self, path: str = None):
+    @property
+    def weights(self):
+
+        return self.load_array('weights', featcount=self.featcount)
+
+    @property
+    def feat(self):
+
+        return self.load_array('feat', featcount=self.featcount)
+
+    def __init__(self, path: str = None, featcount: int = None):
         """
         """
         path = os.path.abspath(path)
         if not os.path.isdir(path):
             raise ValueError(path)
+
+        self.featcount = featcount
 
         matrix_path = os.path.normpath(os.path.join(path, 'matrix'))
         corpus_path = os.path.normpath(os.path.join(path, 'corpus'))
@@ -92,6 +107,8 @@ class CorpusMatrix(object):
     def __call__(self):
         """
         """
+        if not isinstance(self.featcount, int):
+            raise RuntimeError(self)
         if not self.file_integrity_check():
             self.make_matrices()
 
@@ -107,10 +124,18 @@ class CorpusMatrix(object):
         """
         return len(self.feat)
 
-    def file_path(self, filename):
+    def file_path(self, filename, featcount: int = None):
 
-        if filename not in MATRIX_FILES:
+        if filename not in MATRIX_FILES + WH_FILES:
             raise ValueError(filename)
+        if filename in WH_FILES:
+            if not featcount:
+                raise RuntimeError(filename)
+            return os.path.normpath(
+                os.path.join(
+                    self.path['matrix'], 'wf', str(featcount), filename
+                )
+            )
         return os.path.normpath(
             os.path.join(self.path['matrix'], '{}'.format(filename))
         )
@@ -132,11 +157,16 @@ class CorpusMatrix(object):
         self.__make_vectors()
         self.__factorize()
 
-    def make_file(self, data: list, objname: str):
+    def make_file(self, data: list, objname: str, featcount: int = None):
         """ Creating a file that will hold an array, numpy array type or
             a dict.
         """
-        path = self.file_path(objname)
+        if objname in WH_FILES:
+            path = self.file_path(objname, featcount=featcount)
+            if not os.path.isdir(os.path.dirname(path)):
+                os.makedirs(os.path.dirname(path))
+        else:
+            path = self.file_path(objname)
 
         if isinstance(data, (numpy.ndarray, numpy.generic,)):
             ext = 'npy'
@@ -145,10 +175,21 @@ class CorpusMatrix(object):
             ext = 'pickle'
             pickle.dump(data, open('{}.{}'.format(path, ext), 'wb+'))
 
-    def load_array(self, arrayname, with_numpy=True):
+    def load_wh_array(self, arrayname, featcount: int = 10):
+
+        extension = 'npy'
+        path = '{}.{}'
+
+        return numpy.load(path)
+
+    def load_array(self, arrayname, with_numpy=True, featcount: int = None):
         """ Loading an array from file. """
         extension = 'npy' if with_numpy else 'pickle'
-        path = '{}.{}'.format(self.file_path(arrayname), extension)
+        if arrayname in WH_FILES:
+            _ = self.file_path(arrayname, featcount=featcount)
+        else:
+            _ = self.file_path(arrayname)
+        path = '{}.{}'.format(_, extension)
 
         if with_numpy:
             return numpy.load(path)
@@ -176,11 +217,19 @@ class CorpusMatrix(object):
         v = numpy.matrix(wordmatrix)
         self.make_file(v, 'vectors')
 
+    def feat_weights_nmb(self, featcount: int = 10):
+        pass
+
+    def factorize(self, featcount: int = 10):
+        """ Calling the factorization with n features. """
+
+        pass
+
     def __factorize(self, iterate=50, feature_number=25):
         vectors = self.vectors
         weight, feat = nmf.factorize(vectors, pc=feature_number, iter=iterate)
         for _ in zip((weight, feat), ['weights', 'feat']):
-            self.make_file(*_)
+            self.make_file(*_, featcount=self.featcount)
 
     def _matrix_files(self):
         return glob.glob(os.path.normpath(

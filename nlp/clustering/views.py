@@ -117,7 +117,7 @@ def features_and_docs(path: str = None,
                       docs_per_feature: int = 3,
                       features_per_doc: int = 3):
     """ Returning features and docs. """
-    data = CorpusMatrix(path=path)
+    data = CorpusMatrix(path=path, featcount=feature_number)
     data()
 
     if data.get_feature_number() != feature_number:

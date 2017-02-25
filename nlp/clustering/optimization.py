@@ -230,7 +230,7 @@ def geneticoptimize(domain, costf, popsize=50, step=1,
 
 if __name__ == '__main__':
 
-    with open('data/schedule.txt', 'r') as _file:
+    with open('txtdata/schedule.txt', 'r') as _file:
         for _line in _file.readlines():
             origin, dest, depart, arrive, price = _line.strip().split(',')
             flights.setdefault((origin, dest), [])
