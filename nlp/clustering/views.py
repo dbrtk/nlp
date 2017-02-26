@@ -120,8 +120,11 @@ def features_and_docs(path: str = None,
     data = CorpusMatrix(path=path, featcount=feature_number)
     data()
 
-    if data.get_feature_number() != feature_number:
-        print(feature_number)
+    available_feats = data.available_feats
+    try:
+        next(_.get('featcount') for _ in available_feats
+             if feature_number == _.get('featcount'))
+    except StopIteration:
         data.call_factorize(feature_number=feature_number)
 
     json_obj, topp, pn = features_to_json(

@@ -84,12 +84,17 @@ class CorpusMatrix(object):
     @property
     def available_feats(self):
         path = os.path.join(self.path.get('matrix'), 'wf')
+        if not os.path.isdir(path):
+            return []
+        old_fcount = self.featcount
         dirs = os.listdir(path)
         out = []
         for _ in dirs:
             self.featcount = _
+
             if not int(_) == len(self.feat):
-                raise RuntimeError(self)
+                continue  # raise RuntimeError(self)
+
             _path = os.path.join(path, _)
             out.append(dict(
                 featcount=_,
@@ -97,6 +102,7 @@ class CorpusMatrix(object):
                 feat=os.path.join(_path, 'feat.npy'),
                 weights=os.path.join(_path, 'weights.npy')
             ))
+        self.featcount = old_fcount
         return out
 
     def __init__(self, path: str = None, featcount: int = None):
@@ -130,10 +136,11 @@ class CorpusMatrix(object):
         if not self.file_integrity_check():
             self.make_matrices()
 
-    def call_factorize(self, iterate=50, feature_number=20):
+    def call_factorize(self, iterate=50, feature_number=20, purge=False):
         """ Removes the weights and features and call matrix.
         """
-        self.delete_matrices('weights', 'feat')
+        if purge:
+            self.delete_matrices('weights', 'feat')
         self.__factorize(iterate=iterate, feature_number=feature_number)
 
     def get_feature_number(self):
@@ -233,7 +240,7 @@ class CorpusMatrix(object):
 
     def factorize(self, featcount: int = 10):
         """ Calling the factorization with n features. """
-
+        # todo(): delete?
         pass
 
     def __factorize(self, iterate=50, feature_number=25):
