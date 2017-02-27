@@ -2,6 +2,7 @@
 import glob
 import os
 import pickle
+import shutil
 
 import numpy
 
@@ -170,7 +171,7 @@ class CorpusMatrix(object):
 
     def file_path(self, filename, featcount: int = None):
 
-        if filename not in MATRIX_FILES + WH_FILES + KMEANS_FILES:
+        if filename not in MATRIX_FILES + WH_FILES:  # + KMEANS_FILES:
             raise ValueError(filename)
         if filename in WH_FILES:
             if not featcount:
@@ -297,3 +298,8 @@ class CorpusMatrix(object):
             matrix_name = self._matrix_name(item)
             if matrix_name in args:
                 os.remove(item)
+
+    def remove_featdir(self):
+        path = os.path.join(self.path.get('matrix'), 'wf', str(self.featcount))
+        if os.path.isdir(path):
+            shutil.rmtree(path)

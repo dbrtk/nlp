@@ -129,7 +129,7 @@ def features_and_docs(path: str = None,
     available_feats = data.available_feats
     try:
         next(_.get('featcount') for _ in available_feats
-             if feature_number == _.get('featcount'))
+             if feature_number == int(_.get('featcount')))
     except StopIteration:
         data.call_factorize(feature_number=feature_number)
 
@@ -146,3 +146,9 @@ def features_and_docs(path: str = None,
 def get_features_count(path: str = None):
     """ Returns the feature number that have been computed for this corpus. """
     return CorpusMatrix(path=path).available_feats
+
+
+def remove_feature(**kwds):
+
+    data = CorpusMatrix(**kwds)
+    data.remove_featdir()
