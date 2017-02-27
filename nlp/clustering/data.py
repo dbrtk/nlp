@@ -22,6 +22,10 @@ MATRIX_FILES = [
 WH_FILES = [
     'weights', 'feat',
 ]
+KMEANS_FILES = [
+
+    'bestmatches'
+]
 TEMP_MATRICES = [
 
     'toppatterns', 'patternnames'
@@ -105,6 +109,21 @@ class CorpusMatrix(object):
         self.featcount = old_fcount
         return out
 
+    @property
+    def available_kmeans(self):
+        path = os.path.join(self.path.get('matrix'), 'kmeans')
+        if not os.path.isdir(path):
+            return []
+        dirs = os.listdir(path)
+        out = []
+        for _ in dirs:
+            _path = os.path.join(path, _)
+            out.append(dict(
+                k=_,
+                path=_path
+            ))
+        return out
+
     def __init__(self, path: str = None, featcount: int = None):
         """
         """
@@ -151,7 +170,7 @@ class CorpusMatrix(object):
 
     def file_path(self, filename, featcount: int = None):
 
-        if filename not in MATRIX_FILES + WH_FILES:
+        if filename not in MATRIX_FILES + WH_FILES + KMEANS_FILES:
             raise ValueError(filename)
         if filename in WH_FILES:
             if not featcount:
@@ -159,6 +178,12 @@ class CorpusMatrix(object):
             return os.path.normpath(
                 os.path.join(
                     self.path['matrix'], 'wf', str(featcount), filename
+                )
+            )
+        if filename in KMEANS_FILES:
+            return os.path.normpath(
+                os.path.join(
+                    self.path['matrix'], 'kmeans', str(featcount), filename
                 )
             )
         return os.path.normpath(

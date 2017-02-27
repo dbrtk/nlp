@@ -69,7 +69,6 @@ def factorize(v, pc=10, iter=50):
 
         # Calculate the current difference
         cost = difcost(v, wh)
-        # cost = annealing_features(v, wh, neo_difcost)
 
         if i % 10 == 0:
             print(cost)

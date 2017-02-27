@@ -19,18 +19,24 @@ def simple_dendogram():
     return clust, depth
 
 
-def kmeans_clust(corpus_path):
-    """For a given corpora, returns a kmeans cluster.
+def kmeans_clust(path, k: int = 10):
+    """ Given a corpus and the number of groups (k), returns a kmeans cluster.
     """
-    features.set_corpus(corpus_path)
+
+    # data = CorpusMatrix(path=path)
+    # data()
+    features.set_corpus(path)
     allwords, articlewords, articletitles = features.get_words()
     wordmatrix, wordvec = features.makematrix(allwords, articlewords)
+
     return clusters.get_clusters(
-        clusters.kcluster(wordmatrix, k=10), articletitles)
+        clusters.kcluster(wordmatrix, k=k), articletitles)
 
 
 def independent_features(corpus_path: str = None, features_count: int = 10):
-    """ Extracting independent features form the corpus. """
+    """ Extracting independent features form the corpus. This function shoud
+        remain in order to keep track of how feature extraction works (calls).
+    """
 
     features.set_corpus(corpus_path)
 
@@ -140,7 +146,3 @@ def features_and_docs(path: str = None,
 def get_features_count(path: str = None):
     """ Returns the feature number that have been computed for this corpus. """
     return CorpusMatrix(path=path).available_feats
-
-
-def get_matrices(path: str = None):
-    pass
