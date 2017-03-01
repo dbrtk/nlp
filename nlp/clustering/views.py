@@ -110,9 +110,12 @@ def docs_to_json(titles, toppatterns, patternnames, features_per_doc=3):
         toppatterns[j].sort()
         toppatterns[j].reverse()
         # Print the top three patterns
-        for i in range(features_per_doc):
-            doc['weight'] = toppatterns[j][i][0]
-            doc['feature'] = patternnames[toppatterns[j][i][1]]
+
+        doc['features'] = [dict(
+            weight=toppatterns[j][i][0],
+            feature=patternnames[toppatterns[j][i][1]]
+        ) for i in range(features_per_doc)]
+
         output.append(doc)
     return output
 
