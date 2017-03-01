@@ -109,8 +109,7 @@ def docs_to_json(titles, toppatterns, patternnames, features_per_doc=3):
         # reverse sort them
         toppatterns[j].sort()
         toppatterns[j].reverse()
-        # Print the top three patterns
-
+        # Add a variable number  of top features for this document.
         doc['features'] = [dict(
             weight=toppatterns[j][i][0],
             feature=patternnames[toppatterns[j][i][1]]
