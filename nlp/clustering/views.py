@@ -120,27 +120,27 @@ def docs_to_json(titles, toppatterns, patternnames, features_per_doc=3):
 
 
 def features_and_docs(path: str = None,
-                      feature_number: int = 25,
-                      feature_words: int = 6,
-                      docs_per_feature: int = 3,
-                      features_per_doc: int = 3):
+                      feats: int = 25,
+                      words: int = 6,
+                      docs_per_feat: int = 3,
+                      feats_per_doc: int = 3):
     """ Returning features and docs. """
-    data = CorpusMatrix(path=path, featcount=feature_number)
+    data = CorpusMatrix(path=path, featcount=feats)
     data()
 
     available_feats = data.available_feats
     try:
         next(_.get('featcount') for _ in available_feats
-             if feature_number == int(_.get('featcount')))
+             if feats == int(_.get('featcount')))
     except StopIteration:
-        data.call_factorize(feature_number=feature_number)
+        data.call_factorize(feature_number=feats)
 
     json_obj, topp, pn = features_to_json(
         data.weights, data.feat, data.doctitles, data.wordvec,
-        feature_words=feature_words, docs_per_feature=docs_per_feature)
+        feature_words=words, docs_per_feature=docs_per_feat)
 
     docs_obj = docs_to_json(data.doctitles, topp, pn,
-                            features_per_doc=features_per_doc)
+                            features_per_doc=feats_per_doc)
 
     return json_obj, docs_obj
 
