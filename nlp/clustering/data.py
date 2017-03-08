@@ -196,7 +196,8 @@ class CorpusMatrix(object):
         """ Setting up permissions on the files and directories. Because of
             celery and apache, these owe to be 777 for all.
         """
-        os.chmod(path, stat.S_IRWXU | stat.S_IRWXG | stat.S_IRWXO)
+        # os.chmod(path, stat.S_IRWXU | stat.S_IRWXG | stat.S_IRWXO)
+        pass
 
     def mkdir_mtrx(self):
         """ Making the directory for matrix files. """

@@ -128,6 +128,12 @@ def features_and_docs(path: str = None,
     data = CorpusMatrix(path=path, featcount=feats)
     data()
 
+    print('features and docs nlp')
+    print(data)
+    print(data.available_feats)
+    print(feats)
+    print(type(feats))
+
     available_feats = data.available_feats
     try:
         next(_.get('featcount') for _ in available_feats
