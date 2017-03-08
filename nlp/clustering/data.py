@@ -3,6 +3,7 @@ import glob
 import os
 import pickle
 import shutil
+import stat
 
 import numpy
 
@@ -191,9 +192,14 @@ class CorpusMatrix(object):
             os.path.join(self.path['matrix'], '{}'.format(filename))
         )
 
+    def chmod_fd(self, path):
+        os.chmod(path, stat.S_IRWXU |
+                 stat.S_IRWXG | stat.S_IRWXO)
+
     def mkdir_mtrx(self):
         """ Making the directory for matrix files. """
-        os.makedirs(os.path.join(self.path['matrix']))
+        os.makedirs(self.path['matrix'])
+        self.chmod_fd(self.path['matrix'])
 
     def file_integrity_check(self):
         """ Checking whether all files exist. """
@@ -215,7 +221,9 @@ class CorpusMatrix(object):
         if objname in WH_FILES:
             path = self.file_path(objname, featcount=featcount)
             if not os.path.isdir(os.path.dirname(path)):
-                os.makedirs(os.path.dirname(path))
+                _path = os.path.dirname(path)
+                os.makedirs(_path)
+                self.chmod_fd(_path)
         else:
             path = self.file_path(objname)
 
@@ -225,6 +233,7 @@ class CorpusMatrix(object):
         else:
             ext = 'pickle'
             pickle.dump(data, open('{}.{}'.format(path, ext), 'wb+'))
+        self.chmod_fd('{}.{}'.format(path, ext))
 
     def load_array(self, arrayname, with_numpy=True, featcount: int = None):
         """ Loading an array from file. """
