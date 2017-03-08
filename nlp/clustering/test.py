@@ -76,7 +76,7 @@ def purge():
 
 
 def count_feats():
-    _ = '/home/dominik/www/nlpdata/corpora/58b089d8e032396b01092385'
+    _ = '/home/dominik/www/nlpdata/corpora/58c05406e0323911b9c31583'
     data = CorpusMatrix(path=_)
     data.available_feats
 

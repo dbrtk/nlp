@@ -193,13 +193,17 @@ class CorpusMatrix(object):
         )
 
     def chmod_fd(self, path):
-        os.chmod(path, stat.S_IRWXU |
-                 stat.S_IRWXG | stat.S_IRWXO)
+        """ Setting up permissions on the files and directories. Because of
+            celery and apache, these owe to be 777 for all.
+        """
+        os.chmod(path, stat.S_IRWXU | stat.S_IRWXG | stat.S_IRWXO)
 
     def mkdir_mtrx(self):
         """ Making the directory for matrix files. """
-        os.makedirs(self.path['matrix'])
+        _wf = os.path.join(self.path['matrix'], 'wf')
+        os.makedirs(_wf)
         self.chmod_fd(self.path['matrix'])
+        self.chmod_fd(_wf)
 
     def file_integrity_check(self):
         """ Checking whether all files exist. """
@@ -220,10 +224,10 @@ class CorpusMatrix(object):
         """
         if objname in WH_FILES:
             path = self.file_path(objname, featcount=featcount)
-            if not os.path.isdir(os.path.dirname(path)):
-                _path = os.path.dirname(path)
-                os.makedirs(_path)
-                self.chmod_fd(_path)
+            parentpath = os.path.dirname(path)
+            if not os.path.isdir(parentpath):
+                os.makedirs(parentpath)
+                self.chmod_fd(parentpath)
         else:
             path = self.file_path(objname)
 
@@ -294,8 +298,6 @@ class CorpusMatrix(object):
 
     def purge_matrixdir(self):
         files = self._matrix_files()
-        print(files)
-
         for item in files:
             print(item)
 
