@@ -13,7 +13,8 @@ PRINTER = pprint.PrettyPrinter(indent=4)
 
 
 def separatewords(text):
-    splitter = re.compile('\\W*')
+    # splitter = re.compile('\\W*')
+    splitter = re.compile(r'\W*')
     return [s.lower() for s in splitter.split(text) if len(s) > 3]
 
 

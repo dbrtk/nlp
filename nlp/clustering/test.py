@@ -1,8 +1,9 @@
 
 
 import pprint
-
 import numpy
+import os
+import shutil
 
 from nlp.clustering import clusters, features, nmf, views
 from nlp.clustering.data import CorpusMatrix
@@ -14,6 +15,7 @@ PRINTER = pprint.PrettyPrinter(indent=4)
 def get_features_old():
 
     _ = '/home/dominik/Desktop/wiki/test/corpus'
+    # _ = '/home/dominik/www/nlpdata/corpora/58c1243de032390e3bc0d36c/corpus/'
     features.set_corpus(_)
 
     allwords, articlewords, articletitles = features.get_words()
@@ -24,17 +26,25 @@ def get_features_old():
     weights, feat = nmf.factorize(v, pc=25, iter=50)
 
     topp, pn = features.showfeatures(weights, feat, articletitles, wordvec)
+
+    print('showing the features')
+    print(articletitles)
+    print(topp)
+    print(pn)
+
     features.showarticles(articletitles, topp, pn)
 
 
 def get_features_with_data(featcount: int = 5):
 
-    # _ = '/home/dominik/Desktop/wiki/test'
-    _ = '/home/dominik/www/nlpdata/corpora/58b089d8e032396b01092385/'
+    _ = '/home/dominik/Desktop/wiki/test/'
+
+    # _ = '/home/dominik/www/nlpdata/corpora/58c1243de032390e3bc0d36c/'
+    shutil.rmtree(os.path.join(_, 'matrix'))
+
     data = CorpusMatrix(path=_, featcount=featcount)
 
     # features.set_corpus(_)
-
     # allwords, articlewords, articletitles = features.get_words()
 
     # wordmatrix, wordvec = features.makematrix(allwords, articlewords)
@@ -51,12 +61,25 @@ def get_features_with_data(featcount: int = 5):
 
     # PRINTER.pprint(json_obj)
     data()
-    data.call_factorize(feature_number=featcount, iterate=200)
+
+    data.call_factorize(feature_number=featcount)
     print('should have 20 features')
     json_obj, topp, pn = views.features_to_json(
         data.weights, data.feat, data.doctitles, data.wordvec)
     PRINTER.pprint(json_obj)
-    print(len(json_obj))
+
+
+def get_feats_view():
+
+    # path = '/home/dominik/Desktop/wiki/test/'
+    path = '/home/dominik/www/nlpdata/corpora/58c1546ce0323937afe44862'
+    # path = '/home/dominik/www/nlpdata/corpora/58c14e04e03239300f80a58b'
+    try:
+        shutil.rmtree(os.path.join(path, 'matrix'))
+    except FileNotFoundError:
+        pass
+    _json, _docs = views.features_and_docs(path, feats=10)
+    PRINTER.pprint(_json)
 
 
 def kmeans_clust():
@@ -82,6 +105,7 @@ def count_feats():
 
 
 if __name__ == "__main__":
-
+    # get_features_old()
     # get_features_with_data()
-    count_feats()
+    # count_feats()
+    get_feats_view()
