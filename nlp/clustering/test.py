@@ -14,8 +14,7 @@ PRINTER = pprint.PrettyPrinter(indent=4)
 
 def get_features_old():
 
-    _ = '/home/dominik/Desktop/wiki/test/corpus'
-    # _ = '/home/dominik/www/nlpdata/corpora/58c1243de032390e3bc0d36c/corpus/'
+    _ = '/path/to/corpus'
     features.set_corpus(_)
 
     allwords, articlewords, articletitles = features.get_words()
@@ -27,19 +26,13 @@ def get_features_old():
 
     topp, pn = features.showfeatures(weights, feat, articletitles, wordvec)
 
-    print('showing the features')
-    print(articletitles)
-    print(topp)
-    print(pn)
-
     features.showarticles(articletitles, topp, pn)
 
 
 def get_features_with_data(featcount: int = 5):
 
-    _ = '/home/dominik/Desktop/wiki/test/'
+    _ = '/path/to/corpus/'
 
-    # _ = '/home/dominik/www/nlpdata/corpora/58c1243de032390e3bc0d36c/'
     shutil.rmtree(os.path.join(_, 'matrix'))
 
     data = CorpusMatrix(path=_, featcount=featcount)
@@ -70,10 +63,7 @@ def get_features_with_data(featcount: int = 5):
 
 
 def get_feats_view():
-
-    # path = '/home/dominik/Desktop/wiki/test/'
-    path = '/home/dominik/www/nlpdata/corpora/58c1546ce0323937afe44862'
-    # path = '/home/dominik/www/nlpdata/corpora/58c14e04e03239300f80a58b'
+    path = '/path/to/corpus/'
     try:
         shutil.rmtree(os.path.join(path, 'matrix'))
     except FileNotFoundError:
@@ -83,8 +73,7 @@ def get_feats_view():
 
 
 def kmeans_clust():
-    # _ = '/home/dominik/www/nlpdata/corpora/58a315fae032394f90e4b8f8/'
-    _ = '/home/dominik/Desktop/wiki/tinytiny/'
+    _ = '/path/to/corpus/'
     kclust = views.kmeans_clust(_)
     print(kclust)
     for i in kclust:
@@ -93,19 +82,17 @@ def kmeans_clust():
 
 
 def purge():
-    data = CorpusMatrix(path='/home/dominik/Desktop/wiki/tinytiny/')
+    data = CorpusMatrix(path='/path/to/corpus/')
     # data.purge_matrixdir()
     data.delete_matrices('weights', 'feat')
 
 
 def count_feats():
-    _ = '/home/dominik/www/nlpdata/corpora/58c05406e0323911b9c31583'
+    _ = '/path/to/corpus/'
     data = CorpusMatrix(path=_)
     data.available_feats
 
 
 if __name__ == "__main__":
-    # get_features_old()
-    # get_features_with_data()
-    # count_feats()
-    get_feats_view()
+    get_features_old()
+    # get_feats_view()

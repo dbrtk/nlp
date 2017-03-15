@@ -83,7 +83,11 @@ def factorize(v, pc=10, iter=50):
         # Update weights matrix
         wn = (v * numpy.transpose(h))
         wd = (w * h * numpy.transpose(h))
+
         w = numpy.matrix(numpy.array(w) * numpy.array(wn) / numpy.array(wd))
+
+        if numpy.any(numpy.isnan(w)):
+            w = numpy.nan_to_num(w)
 
     return w, h
 
