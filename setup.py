@@ -48,7 +48,7 @@ setup(
         'Operating System :: Unix',
     ],
 
-    keywords='nltk natural language processing',
+    keywords='natural language processing',
 
     packages=find_packages(include=['nlp']),
 
