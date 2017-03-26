@@ -158,7 +158,7 @@ class CorpusMatrix(object):
             self.make_matrices()
 
     def call_factorize(self, iterate=50, feature_number=20, purge=False):
-        """ Removes the weights and features and call matrix.
+        """ Removes the weights and features and calls the matrix generator.
         """
         if purge:
             self.delete_matrices('weights', 'feat')
