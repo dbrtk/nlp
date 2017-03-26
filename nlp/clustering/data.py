@@ -315,3 +315,8 @@ class CorpusMatrix(object):
         path = os.path.join(self.path.get('matrix'), 'wf', str(self.featcount))
         if os.path.isdir(path):
             shutil.rmtree(path)
+
+    def getnerate_basic_matrices(self):
+        vectors = self.vectors
+        self.file_integrity_check()
+        return vectors

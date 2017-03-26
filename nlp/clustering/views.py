@@ -153,3 +153,11 @@ def remove_feature(**kwds):
 
     data = CorpusMatrix(**kwds)
     data.remove_featdir()
+
+
+def generate_matrices(path):
+    """ Generating basic matrices. """
+    data = CorpusMatrix(path=path)
+    vec = data.getnerate_basic_matrices()
+    # todo(): check vectors
+    return vec
