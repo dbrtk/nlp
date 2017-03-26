@@ -138,10 +138,11 @@ class CorpusMatrix(object):
         matrix_path = os.path.normpath(os.path.join(path, 'matrix'))
         corpus_path = os.path.normpath(os.path.join(path, 'corpus'))
 
-        if not os.path.isdir(corpus_path):
-            raise RuntimeError(corpus_path)
-
         self.path = dict(path=path, matrix=matrix_path, corpus=corpus_path)
+
+        if not os.path.isdir(corpus_path):
+            self.mkdir_corpus()
+            # raise RuntimeError(corpus_path)
 
         # setting up the path to the corpus on the level of features module.
         features.set_corpus(self.path['corpus'])
@@ -204,6 +205,12 @@ class CorpusMatrix(object):
         os.makedirs(_wf)
         self.chmod_fd(self.path['matrix'])
         self.chmod_fd(_wf)
+
+    def mkdir_corpus(self):
+        """ Making the directory for matrix files. """
+        path = self.path['corpus']
+        os.makedirs(path)
+        self.chmod_fd(path)
 
     def file_integrity_check(self):
         """ Checking whether all files exist. """
