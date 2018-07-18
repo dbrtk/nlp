@@ -1,48 +1,7 @@
 
-import random
 
 import numpy
-
-from .optimization import annealing_features
-
-
-def _costfun(v, wh):
-    dif = 0
-    for i in range(len(v)):
-        dif += pow(v[i] - wh[i], 2)
-    return dif
-
-
-def make_domain(v, wh):
-    cols = numpy.shape(v)[1]
-    v = v.tolist()[0]
-    wh = wh.tolist()[0]
-    return [(0, pow(v[_] + wh[_], 2)) for _ in range(cols)]
-
-
-def neo_difcost(v, wh):
-    dif = 0
-    # Loop over every row and column in the matrix
-    for i in range(numpy.shape(v)[0]):
-        domain = make_domain(v[i], wh[i])
-        print('domain:')
-        print(domain)
-        vec = []
-        for j in range(numpy.shape(v)[1]):
-            # cost = annealing_features((a[i, j] - b[i, j]), domain, costf)
-            # Add together the differences
-            vec.append(float(v[i, j].astype(int) - wh[i, j].astype(int)))
-            # dif += pow(v[i, j] - wh[i, j], 2)
-        print('vec:')
-        print(vec)
-        print('wh')
-        _wh = wh[i].tolist()[0]
-        s = annealing_features(vec, _wh, domain, _costfun)
-        print(s)
-        # s = _costfun(s, wh)
-        # print(s)
-        # dif += s
-    return dif
+import random
 
 
 def difcost(a, b):

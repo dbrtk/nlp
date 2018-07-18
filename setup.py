@@ -6,6 +6,16 @@ from setuptools import find_packages, setup
 HERE = path.abspath(path.dirname(__file__))
 
 
+
+with open('requirements.txt') as _file:
+
+    requirements = []
+    for package in _file.readlines():
+        package = package.strip()
+        if package:
+            requirements.append(package)
+
+
 setup(
     name='nlp',
     # version='0.1',
@@ -52,5 +62,5 @@ setup(
 
     packages=find_packages(include=['nlp']),
 
-    install_requires=['numpy', 'scipy', 'Pillow']
+    install_requires=requirements
 )

@@ -5,4 +5,5 @@ nlp.egg-*
 **/*.jpg
 **/*.jpeg
 **/*.png
+**/*.*~
 nlp/clustering/*.txt
