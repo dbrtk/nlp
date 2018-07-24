@@ -1,14 +1,16 @@
 
 import glob
 import os
+import pathlib
 import pickle
 import shutil
 import stat
 
 import numpy
 
+from celery.contrib import rdb
 
-from .clustering import features, nmf
+from . import features, nmf, simple_nmf
 
 
 MATRIX_FILES = [
@@ -90,10 +92,13 @@ class CorpusMatrix(object):
     @property
     def available_feats(self):
         path = os.path.join(self.path.get('matrix'), 'wf')
+
         if not os.path.isdir(path):
             return []
+
         old_fcount = self.featcount
         dirs = os.listdir(path)
+
         out = []
         for _ in dirs:
             self.featcount = _
@@ -225,13 +230,15 @@ class CorpusMatrix(object):
         self.__make_vectors()
         self.__factorize()
 
-    def make_file(self, data: list, objname: str, featcount: int = None):
+    def make_file(self, data: (numpy.ndarray, list), objname: str,
+                  featcount: int = None):
         """ Creating a file that will hold an array, numpy array type or
             a dict.
         """
         if objname in WH_FILES:
             path = self.file_path(objname, featcount=featcount)
             parentpath = os.path.dirname(path)
+
             if not os.path.isdir(parentpath):
                 os.makedirs(parentpath)
                 self.chmod_fd(parentpath)
@@ -255,8 +262,10 @@ class CorpusMatrix(object):
             _ = self.file_path(arrayname)
         path = '{}.{}'.format(_, extension)
 
+        if not os.path.exists(path):
+            raise ValueError(path)
         if with_numpy:
-            return numpy.load(path)
+            return numpy.load(pathlib.Path(path))
         else:
             return pickle.load(open(path, 'rb'))
 
@@ -290,8 +299,26 @@ class CorpusMatrix(object):
         pass
 
     def __factorize(self, iterate=50, feature_number=25):
+        """Calling the factorization of the matrix in order to retrieve 2
+           matrices; 1 containing features; the other one containing weights.
+        """
         vectors = self.vectors
-        weight, feat = nmf.factorize(vectors, pc=feature_number, iter=iterate)
+        inst = nmf.NMF_ANLS_BLOCKPIVOT(
+            max_iter=iterate,
+            main_matrix=vectors,
+            feats_number=feature_number)
+
+        weight, feat = inst.factorize()
+
+        # weight, feat = simple_nmf.factorize(
+        #     vectors, pc=feature_number, iter=iterate)
+        for _ in zip((weight, feat), ['weights', 'feat']):
+            self.make_file(*_, featcount=self.featcount)
+
+    def __factorize__old(self, iterate=50, feature_number=25):
+        vectors = self.vectors
+        weight, feat = simple_nmf.factorize(
+            vectors, pc=feature_number, iter=iterate)
         for _ in zip((weight, feat), ['weights', 'feat']):
             self.make_file(*_, featcount=self.featcount)
 

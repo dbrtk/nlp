@@ -1,9 +1,10 @@
 
 import numpy
-import random
 
-from .nnls import nnlsm_blockpivot
-from .utils import normalize_column_pair
+from celery.contrib import rdb
+
+from nlp.nnls import nnlsm_blockpivot
+from nlp.utils import normalize_column_pair
 
 
 class NMF(object):
@@ -19,27 +20,42 @@ class NMF(object):
 
     def factorize(self):
 
-        ic = numpy.shape(self.main_matrix)[0]
-        fc = numpy.shape(self.main_matrix)[1]
+        if self.init is not None:
+            weights = self.init[0].copy()
+            features = self.init[1].copy()
+        else:
+            # articles_count = numpy.shape(self.main_matrix)[0]
+            # words_count = numpy.shape(self.main_matrix)[1]
 
-        # Initialize the weight and feature matrices with random values
-        weights = numpy.matrix(
-            [[random.random() for j in range(self.feats_number)]
-             for i in range(ic)])
-        features = numpy.matrix([[random.random() for i in range(fc)]
-                                 for i in range(self.feats_number)])
+            # weights = numpy.matrix(
+            #     [[numpy.random.random() for _ in range(self.feats_number)]
+            #      for j in range(articles_count)]
+            # )
+            # features = numpy.matrix(
+            #     [[numpy.random.random() for _ in range(words_count)]
+            #      for _ in range(self.feats_number)]
+            # )
 
-        for i in range(self.max_iter):
+            weights = numpy.random.rand(
+                self.main_matrix.shape[0], self.feats_number)
+            features = numpy.random.rand(
+                self.main_matrix.shape[1], self.feats_number)
+
+        for _it in range(self.max_iter):
 
             (weights, features) = self.iter_solver(
                 self.main_matrix,
                 weights,
                 features,
                 self.feats_number,
-                i
+                _it
             )
         weights, features, _ = normalize_column_pair(weights, features)
-        return (weights, features)
+
+        # todo(): transpose the features matrix.
+        _features = features.T
+
+        return (weights, _features)
 
 
 class WetAss_NMF(object):
@@ -76,10 +92,10 @@ class NMF_MU(object):
 
 class NMF_ANLS_BLOCKPIVOT(NMF):
 
-    def __init__(self, max_iter=50, max_time=numpy.inf):
+    def __init__(self, *args, **kwds):
 
-        self.max_iter = max_iter
-        self.max_time = max_time
+        self.max_time = numpy.inf
+        super().__init__(*args, **kwds)
 
     def iter_solver(self, A, W, H, k, it):
 
@@ -88,3 +104,21 @@ class NMF_ANLS_BLOCKPIVOT(NMF):
         Sol, info = nnlsm_blockpivot(H, A.T, init=W.T)
         W = Sol.T
         return (W, H)
+
+
+def _test_nmf_anls_blockpivot():
+
+    k = 10
+    m, n = 300, 300
+    W_org = numpy.random.rand(m, k)
+    H_org = numpy.random.rand(n, k)
+    A = W_org.dot(H_org.T)
+    alg = NMF_ANLS_BLOCKPIVOT(main_matrix=A, feats_number=k, max_iter=100)
+    results = alg.factorize()
+
+    print(results)
+
+
+if __name__ == '__main__':
+
+    _test_nmf_anls_blockpivot()

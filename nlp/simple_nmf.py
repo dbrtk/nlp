@@ -19,8 +19,12 @@ def factorize(v, pc=10, iter=50):
     """
     ic = numpy.shape(v)[0]
     fc = numpy.shape(v)[1]
+
     # Initialize the weight and feature matrices with random values
+    # Weight Matrix
     w = numpy.matrix([[random.random() for j in range(pc)] for i in range(ic)])
+
+    # Feature Matrix
     h = numpy.matrix([[random.random() for i in range(fc)] for i in range(pc)])
 
     # Perform operation a maximum of iter times
@@ -49,6 +53,7 @@ def factorize(v, pc=10, iter=50):
         if numpy.any(numpy.isnan(w)):
             w = numpy.nan_to_num(w)
 
+    # returns (weights, features)
     return w, h
 
 

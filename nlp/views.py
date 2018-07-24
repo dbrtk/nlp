@@ -2,7 +2,7 @@
 
 import numpy
 
-from . import clusters, features, nmf
+from . import config, clusters, features, nmf
 from .data import CorpusMatrix
 
 
@@ -78,6 +78,7 @@ def features_to_json(w, h, titles, wordvec, feature_words: int = 6,
 
         # Create a list of articles for this feature
         flist = []
+
         for j in range(len(titles)):
             # Add the article with its weight
             flist.append((w[j, i], titles[j]))
@@ -132,7 +133,7 @@ def features_and_docs(path: str = None,
         next(_.get('featcount') for _ in available_feats
              if feats == int(_.get('featcount')))
     except StopIteration:
-        data.call_factorize(feature_number=feats)
+        data.call_factorize(feature_number=feats, iterate=config.MAX_ITERATE)
 
     json_obj, topp, pn = features_to_json(
         data.weights, data.feat, data.doctitles, data.wordvec,
