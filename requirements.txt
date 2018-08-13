@@ -1,5 +1,8 @@
 
-nimfa
 numpy
-Pillow
 scipy
+Pillow
+theano
+nltk
+langdetect
+pycountry

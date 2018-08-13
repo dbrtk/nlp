@@ -18,23 +18,23 @@ def separatewords(text):
     return [s.lower() for s in splitter.split(text) if len(s) > 3]
 
 
-def get_words():
+def get_words(corpus: str = None):
     """Getting the words from a given corpora."""
     allwords = {}
     articlewords = []
     articletitles = []
     ec = 0
 
-    for item in os.listdir(CORPUSPATH):
+    for item in os.listdir(corpus or CORPUSPATH):
         path = os.path.normpath(os.path.join(CORPUSPATH, item))
         txt = ''
         with open(path, 'r') as _file:
             txt = _file.read()
-        title = txt.split('\n')[0]
+        docid = txt.split('\n')[0]
         words = separatewords(txt)
 
         articlewords.append({})
-        articletitles.append(title)
+        articletitles.append(docid)
 
         # Increase the counts for this word in allwords and in articlewords
         for word in words:
@@ -51,6 +51,7 @@ def makematrix(allw: list = None, articlew: list = None):
     wordvec = []
 
     # Only take words that are common but not too common
+    # Because of text parsing on stopwords, this isn't needed.
     for word, count in allw.items():
         if count > 3 and count < len(articlew) * 0.6:
             wordvec.append(word)
@@ -132,10 +133,8 @@ def circular_tree(path_to_data):
     clustjson, depth = clusters.hcluster_to_json(clust, labels=articletitles)
 
     v = numpy.matrix(wordmatrix)
-    print(v)
+
     weights, feat = nmf.factorize(v, pc=20, iter=50)
-    print(feat)
-    print(weights)
 
     topp, pn = showfeatures(weights, feat, articletitles, wordvec)
     showarticles(articletitles, topp, pn)

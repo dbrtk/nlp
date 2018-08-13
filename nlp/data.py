@@ -8,10 +8,8 @@ import stat
 
 import numpy
 
-from celery.contrib import rdb
-
 from . import features, nmf, simple_nmf
-
+from .word_count import get_words
 
 MATRIX_FILES = [
 
@@ -224,7 +222,7 @@ class CorpusMatrix(object):
         return all(_ in files for _ in MATRIX_FILES)
 
     def make_matrices(self):
-        """ Making and saving to disk all matrices. """
+        """ Making and saving to disk all the matrices necessary to . """
         self.__get_words()
         self.__makematrix()
         self.__make_vectors()
@@ -270,7 +268,7 @@ class CorpusMatrix(object):
             return pickle.load(open(path, 'rb'))
 
     def __get_words(self):
-        for _ in zip(features.get_words(),
+        for _ in zip(features.get_words(self.path['corpus']),
                      ['allwords', 'docwords', 'doctitles']):
             self.make_file(*_)
 
@@ -302,6 +300,7 @@ class CorpusMatrix(object):
         """Calling the factorization of the matrix in order to retrieve 2
            matrices; 1 containing features; the other one containing weights.
         """
+
         vectors = self.vectors
         inst = nmf.NMF_ANLS_BLOCKPIVOT(
             max_iter=iterate,
@@ -316,6 +315,9 @@ class CorpusMatrix(object):
             self.make_file(*_, featcount=self.featcount)
 
     def __factorize__old(self, iterate=50, feature_number=25):
+
+        # todo(): delete
+
         vectors = self.vectors
         weight, feat = simple_nmf.factorize(
             vectors, pc=feature_number, iter=iterate)
@@ -334,7 +336,7 @@ class CorpusMatrix(object):
         # shutil.rmtree(self.path['matrix'])
         files = self._matrix_files()
         for item in files:
-            print(item)
+            pass
 
     def delete_matrices(self, *args):
         """

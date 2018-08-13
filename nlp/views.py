@@ -126,6 +126,7 @@ def features_and_docs(path: str = None,
                       docs_per_feat: int = 3,
                       feats_per_doc: int = 3):
     """ Returning features and docs. """
+
     data = CorpusMatrix(path=path, featcount=feats)
     data()
     available_feats = data.available_feats

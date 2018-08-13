@@ -1,8 +1,6 @@
 
 import numpy
 
-from celery.contrib import rdb
-
 from nlp.nnls import nnlsm_blockpivot
 from nlp.utils import normalize_column_pair
 
