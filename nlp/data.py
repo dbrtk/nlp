@@ -268,7 +268,7 @@ class CorpusMatrix(object):
             return pickle.load(open(path, 'rb'))
 
     def __get_words(self):
-        for _ in zip(features.get_words(self.path['corpus']),
+        for _ in zip(get_words(self.path['corpus']),
                      ['allwords', 'docwords', 'doctitles']):
             self.make_file(*_)
 
@@ -300,7 +300,6 @@ class CorpusMatrix(object):
         """Calling the factorization of the matrix in order to retrieve 2
            matrices; 1 containing features; the other one containing weights.
         """
-
         vectors = self.vectors
         inst = nmf.NMF_ANLS_BLOCKPIVOT(
             max_iter=iterate,

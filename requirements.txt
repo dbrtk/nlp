@@ -3,6 +3,7 @@ numpy
 scipy
 Pillow
 theano
+
 nltk
 langdetect
 pycountry

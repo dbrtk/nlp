@@ -3,11 +3,27 @@ import os
 import re
 
 import langdetect
-from nltk.corpus import stopwords
+from nltk import pos_tag, word_tokenize
+from nltk.corpus import stopwords, wordnet
 from nltk.stem.snowball import SnowballStemmer
+from nltk.stem import WordNetLemmatizer
 import pycountry
 
-from .config import DEFAULT_LANGUAGE
+from .config import STOPWORD_REPLACEMENT
+
+
+def get_wordnet_pos(treebank_tag):
+    """ Given a treebank tag, returns a wordnet tag. """
+    if treebank_tag.startswith('J'):
+        return wordnet.ADJ
+    elif treebank_tag.startswith('V'):
+        return wordnet.VERB
+    elif treebank_tag.startswith('N'):
+        return wordnet.NOUN
+    elif treebank_tag.startswith('R'):
+        return wordnet.ADV
+    else:
+        return ''
 
 
 class TextFile(object):
@@ -20,7 +36,8 @@ class TextFile(object):
         self.language = None
 
         self.stem = None
-        self.stopwords = None
+        self.stopwords = []
+        self.lem = None
 
         self.allwords = allwords
 
@@ -29,39 +46,95 @@ class TextFile(object):
             'language': None,
         }
 
-    def __call__(self):
+    def __call__(self, stemming: bool = False):
 
         with open(self.path, 'r') as _file:
             self.txt = _file.read()
 
         docid = self.txt.split('\n')[0]
-        self.language = langdetect.detect(self.txt)
+        try:
+            self.language = langdetect.detect(self.txt)
+            lang = self.lang_name()
+            self.info['language'] = lang
 
-        lang = self.lang_name()
+        except langdetect.lang_detect_exception.LangDetectException as err:
 
-        self.info['language'] = lang
+            # lang detect is not able to detect the language; the support may
+            # be missing.
+            pass
+        else:
+            self.set_lem()
+
+            if stemming:
+                self.set_stem(lang)
+
+            self.set_stopwords(lang)
+
+        if self.lem:
+            # this is only executer when a lemmatizer is defined on self.lem
+            return docid, self.lemmatize_txt(), self.info
+        return docid, self.process_txt(), self.info
+
+    def set_stem(self, lang):
 
         try:
             self.stem = SnowballStemmer(lang, ignore_stopwords=True)
         except ValueError:
             pass
 
+    def set_lem(self):
+
+        if self.language in ['en']:
+            self.lem = WordNetLemmatizer()
+
+    def set_stopwords(self, lang):
+
         try:
             self.stopwords = set(stopwords.words(lang))
             self.info['stopwords'] = True
         except OSError:
-            self.stopwords = []
-
-        return docid, self.process_txt(), self.info
+            self.stopwords = set()
 
     def lang_name(self):
 
-        if len(self.language) != 2:
-            raise RuntimeError(self.language)
         try:
             return pycountry.languages.get(alpha_2=self.language).name.lower()
         except Exception:
-            return DEFAULT_LANGUAGE
+            return ''
+
+    def process_word(self, word):
+
+        if len(word) < 3:
+            return STOPWORD_REPLACEMENT
+
+        if word in self.stopwords:
+            return STOPWORD_REPLACEMENT
+
+        if not re.match(r'^\w*$', word):
+            return STOPWORD_REPLACEMENT
+
+        return word.lower()
+
+    def lemmatize_txt(self):
+
+        out = {}
+
+        for word, _ in pos_tag(word_tokenize(self.txt)):
+
+            word = self.process_word(word)
+
+            pos = get_wordnet_pos(_)
+            if not pos:
+                continue
+            word = self.lem.lemmatize(word, pos=pos)
+
+            out.setdefault(word, 0)
+            out[word] += 1
+
+            self.allwords.setdefault(word, 0)
+            self.allwords[word] += 1
+
+        return out
 
     def process_txt(self):
 
@@ -69,8 +142,8 @@ class TextFile(object):
         words = separatewords(self.txt)
 
         for word in words:
-            if word in self.stopwords:
-                continue
+
+            word = self.process_word(word)
 
             if self.stem:
                 word = self.stem.stem(word)
