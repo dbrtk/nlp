@@ -129,13 +129,14 @@ class CorpusMatrix(object):
             ))
         return out
 
-    def __init__(self, path: str = None, featcount: int = None):
+    def __init__(self, path: str = None, featcount: int = None,
+                 corpusid: str = None):
         """
         """
         path = os.path.abspath(path)
         if not os.path.isdir(path):
             raise ValueError(path)
-
+        self.corpusid = corpusid
         self.featcount = featcount
 
         matrix_path = os.path.normpath(os.path.join(path, 'matrix'))
@@ -268,7 +269,7 @@ class CorpusMatrix(object):
             return pickle.load(open(path, 'rb'))
 
     def __get_words(self):
-        for _ in zip(get_words(self.path['corpus']),
+        for _ in zip(get_words(self.path['corpus'], corpusid=self.corpusid),
                      ['allwords', 'docwords', 'doctitles']):
             self.make_file(*_)
 

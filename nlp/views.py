@@ -122,12 +122,13 @@ def docs_to_json(titles, toppatterns, patternnames, features_per_doc=3):
 
 def features_and_docs(path: str = None,
                       feats: int = 25,
+                      corpusid: str = None,
                       words: int = 6,
                       docs_per_feat: int = 3,
                       feats_per_doc: int = 3):
     """ Returning features and docs. """
 
-    data = CorpusMatrix(path=path, featcount=feats)
+    data = CorpusMatrix(path=path, featcount=feats, corpusid=corpusid)
     data()
     available_feats = data.available_feats
     try:

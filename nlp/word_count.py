@@ -1,4 +1,4 @@
-
+import json
 import os
 import re
 
@@ -8,8 +8,10 @@ from nltk.corpus import stopwords, wordnet
 from nltk.stem.snowball import SnowballStemmer
 from nltk.stem import WordNetLemmatizer
 import pycountry
+import requests
 
-from .config import STOPWORD_REPLACEMENT
+from .config import (
+    CORPUS_ENDPOINT, CORPUS_LEMMA_WORDS_PATH, STOPWORD_REPLACEMENT)
 
 
 def get_wordnet_pos(treebank_tag):
@@ -29,7 +31,7 @@ def get_wordnet_pos(treebank_tag):
 class TextFile(object):
 
     def __init__(self, path: str = None, detect_lang: bool = False,
-                 allwords: dict = None):
+                 allwords: dict = None, lemma_word: dict = None):
 
         self.path = path
         self.txt = None
@@ -45,6 +47,8 @@ class TextFile(object):
             'stopwords': False,
             'language': None,
         }
+
+        self.lemma_word = lemma_word if lemma_word else {}
 
     def __call__(self, stemming: bool = False):
 
@@ -126,13 +130,18 @@ class TextFile(object):
             pos = get_wordnet_pos(_)
             if not pos:
                 continue
-            word = self.lem.lemmatize(word, pos=pos)
 
-            out.setdefault(word, 0)
-            out[word] += 1
+            lemma = self.lem.lemmatize(word, pos=pos)
 
-            self.allwords.setdefault(word, 0)
-            self.allwords[word] += 1
+            out.setdefault(lemma, 0)
+            out[lemma] += 1
+
+            self.lemma_word.setdefault(lemma, [])
+            if not word in self.lemma_word[lemma]:
+                self.lemma_word[lemma].append(word)
+
+            self.allwords.setdefault(lemma, 0)
+            self.allwords[lemma] += 1
 
         return out
 
@@ -173,6 +182,8 @@ class Corpus(object):
         self.articletitles = []
         self.info = []
 
+        self.lemma_word = {}
+
     def __call__(self): self.iter_corpus()
 
     def iter_corpus(self):
@@ -183,9 +194,12 @@ class Corpus(object):
                 path=os.path.normpath(
                     os.path.join(self.corpus_path, file_name)),
                 allwords=self.allwords,
-                detect_lang=True
+                detect_lang=True,
+                lemma_word=self.lemma_word
             )
             docid, articlewords, info = inst()
+
+            self.lemma_word = inst.lemma_word
             self.info.append(info)
 
             self.articletitles.append(docid)
@@ -194,8 +208,26 @@ class Corpus(object):
             self.articlewords.append(articlewords)
 
 
-def get_words(path):
+def process_lemma_word(obj):
+
+    for lemma, words in obj.items():
+        if len(words) == 1 and words[0] == lemma:
+            continue
+        yield (lemma, words)
+
+
+def get_words(path, corpusid: str = None):
 
     inst = Corpus(corpus=path)
     inst()
+
+    lemma_word = dict(process_lemma_word(inst.lemma_word))
+    save_lemma_words(corpusid, lemma_word)
+
     return inst.allwords, inst.articlewords, inst.articletitles
+
+
+def save_lemma_words(docid, obj):
+
+    return requests.post('{}/{}/{}/'.format(
+        CORPUS_ENDPOINT, docid, CORPUS_LEMMA_WORDS_PATH), json=obj)

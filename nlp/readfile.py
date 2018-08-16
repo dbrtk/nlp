@@ -4,7 +4,7 @@ import os
 
 
 def readfile(filename):
-    lines = [line for line in file(filename)]
+    lines = [line for line in open(filename, 'r').readlines()]
 
     colnames = lines[0].strip().split('\t')[1:]
     rownames = []
