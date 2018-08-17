@@ -1,5 +1,6 @@
 
 import glob
+import json
 import os
 import pathlib
 import pickle
@@ -13,13 +14,12 @@ from .word_count import get_words
 
 MATRIX_FILES = [
 
-    'allwords', 'docwords', 'doctitles',
+    'allwords', 'docwords', 'doctitles', 'lemma',
 
     'wordmatrix', 'wordvec',
 
     'vectors',
 
-    # 'weights', 'feat',
 ]
 WH_FILES = [
     'weights', 'feat',
@@ -230,7 +230,7 @@ class CorpusMatrix(object):
         self.__factorize()
 
     def make_file(self, data: (numpy.ndarray, list), objname: str,
-                  featcount: int = None):
+                  featcount: int = None, ext: str = None):
         """ Creating a file that will hold an array, numpy array type or
             a dict.
         """
@@ -243,14 +243,21 @@ class CorpusMatrix(object):
                 self.chmod_fd(parentpath)
         else:
             path = self.file_path(objname)
-
-        if isinstance(data, (numpy.ndarray, numpy.generic,)):
-            ext = 'npy'
-            numpy.save('{}.{}'.format(path, ext), data, fix_imports=False)
-        else:
-            ext = 'pickle'
-            pickle.dump(data, open('{}.{}'.format(path, ext), 'wb+'))
+        if not ext:
+            if isinstance(data, (numpy.ndarray, numpy.generic,)):
+                ext = 'npy'
+                numpy.save('{}.{}'.format(path, ext), data, fix_imports=False)
+            else:
+                ext = 'pickle'
+                pickle.dump(data, open('{}.{}'.format(path, ext), 'wb+'))
+        if ext == 'json':
+            self.write_json_list(data, '{}'.format(path))
         self.chmod_fd('{}.{}'.format(path, ext))
+
+    def write_json_list(self, data, path):
+        """ Writing a list of dictionaries to a csv file. """
+        with open('{}.{}'.format(path, 'json'), 'w+') as _file:
+            _file.writelines('{}\n'.format(json.dumps(_)) for _ in data)
 
     def load_array(self, arrayname, with_numpy=True, featcount: int = None):
         """ Loading an array from file. """
@@ -270,8 +277,12 @@ class CorpusMatrix(object):
 
     def __get_words(self):
         for _ in zip(get_words(self.path['corpus'], corpusid=self.corpusid),
-                     ['allwords', 'docwords', 'doctitles']):
-            self.make_file(*_)
+                     ['allwords', 'docwords', 'doctitles', 'lemma']):
+
+            kwds = {}
+            if _[1] == 'lemma':
+                kwds['ext'] = 'json'
+            self.make_file(*_, **kwds)
 
     def __makematrix(self):
 

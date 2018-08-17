@@ -171,7 +171,7 @@ def separatewords(text):
     return [s.lower() for s in splitter.split(text)]
 
 
-class Corpus(object):
+class CorpusDir(object):
 
     def __init__(self, corpus: str = None):
 
@@ -213,21 +213,14 @@ def process_lemma_word(obj):
     for lemma, words in obj.items():
         if len(words) == 1 and words[0] == lemma:
             continue
-        yield (lemma, words)
+        yield {'lemma': lemma, 'words': words}
 
 
 def get_words(path, corpusid: str = None):
 
-    inst = Corpus(corpus=path)
+    inst = CorpusDir(corpus=path)
     inst()
 
-    lemma_word = dict(process_lemma_word(inst.lemma_word))
-    save_lemma_words(corpusid, lemma_word)
+    lemma_word = list(process_lemma_word(inst.lemma_word))
 
-    return inst.allwords, inst.articlewords, inst.articletitles
-
-
-def save_lemma_words(docid, obj):
-
-    return requests.post('{}/{}/{}/'.format(
-        CORPUS_ENDPOINT, docid, CORPUS_LEMMA_WORDS_PATH), json=obj)
+    return inst.allwords, inst.articlewords, inst.articletitles, lemma_word
