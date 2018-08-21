@@ -227,7 +227,9 @@ class CorpusMatrix(object):
         self.__get_words()
         self.__makematrix()
         self.__make_vectors()
-        self.__factorize()
+
+        # todo(): delete the line below
+        # self.__factorize()
 
     def make_file(self, data: (numpy.ndarray, list), objname: str,
                   featcount: int = None, ext: str = None):
@@ -312,6 +314,7 @@ class CorpusMatrix(object):
         """Calling the factorization of the matrix in order to retrieve 2
            matrices; 1 containing features; the other one containing weights.
         """
+        print("__factorize is called, feats: {}".format(feature_number))
         vectors = self.vectors
         inst = nmf.NMF_ANLS_BLOCKPIVOT(
             max_iter=iterate,

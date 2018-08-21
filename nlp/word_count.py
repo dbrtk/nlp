@@ -127,6 +127,11 @@ class TextFile(object):
 
             word = self.process_word(word)
 
+            # todo(): implement a better way of handling stopwords
+            # todo(): review the line below
+            if word == STOPWORD_REPLACEMENT:
+                continue
+
             pos = get_wordnet_pos(_)
             if not pos:
                 continue
