@@ -59,15 +59,13 @@ class bicluster:
 
 def hcluster(rows, distance=pearson):
     """Hierarchical clustering builds up a hierarchy of groups by
-    continuously merging the two most similar groups. Each of these
-    groups starts as a single item, in this case an individual
-    blog. In each iteration this method calculates the distances
-    between every pair of groups, and the closest ones are merged
-    together to form a new group.
+       continuously merging the two most similar groups. Each of these
+       groups starts as a single item, in this case an individual
+       blog. In each iteration this method calculates the distances
+       between every pair of groups, and the closest ones are merged
+       together to form a new group.
 
-
-    Creating and storing the distances.
-
+       Creating and storing the distances.
     """
     distances = {}
     currentclustid = -1

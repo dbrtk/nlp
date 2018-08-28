@@ -6,15 +6,29 @@ from . import config, clusters, features, nmf
 from .data import CorpusMatrix
 
 
-def simple_dendogram():
-    """A simple json for testing purposes."""
-    features.set_corpus('/home/dominik/Desktop/wiki/tiny/')
+def simple_dendogram(path: str = None,
+                     feats: int = 25,
+                     corpusid: str = None):
+    """Returns the data for a dendogram. Used for testing purposes."""
 
-    allwords, articlewords, articletitles = features.get_words()
+    data = CorpusMatrix(path=path, featcount=feats, corpusid=corpusid)
+    data()
+    available_feats = data.available_feats
+    try:
+        next(_.get('featcount') for _ in available_feats
+             if feats == int(_.get('featcount')))
+    except StopIteration:
+        data.call_factorize(feature_number=feats, iterate=config.MAX_ITERATE)
 
-    wordmatrix, wordvec = features.makematrix(allwords, articlewords)
-    clust = clusters.hcluster(wordmatrix)
-    clust, depth = clusters.hcluster_to_json(clust, labels=articletitles)
+    # todo(): clean-up!
+    # todo(): implement the dendogram
+    # features.set_corpus(corpus_path)
+
+    # allwords, articlewords, articletitles = features.get_words()
+    # wordmatrix, wordvec = features.makematrix(allwords, articlewords)
+
+    clust = clusters.hcluster(data.wordmatrix)
+    clust, depth = clusters.hcluster_to_json(clust, labels=data.doctitles)
 
     return clust, depth
 
@@ -34,7 +48,7 @@ def kmeans_clust(path, k: int = 10):
 
 
 def independent_features(corpus_path: str = None, features_count: int = 10):
-    """ Extracting independent features form the corpus. This function shoud
+    """ Extracting independent features form the corpus. This function should
         remain in order to keep track of how feature extraction works (calls).
     """
 
