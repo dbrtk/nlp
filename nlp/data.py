@@ -135,7 +135,8 @@ class CorpusMatrix(object):
         """
         path = os.path.abspath(path)
         if not os.path.isdir(path):
-            raise ValueError(path)
+            self.make_corpus_dir(path)
+            # raise ValueError(path)
         self.corpusid = corpusid
         self.featcount = featcount
 
@@ -203,6 +204,13 @@ class CorpusMatrix(object):
         """
         os.chmod(path, stat.S_IRWXU | stat.S_IRWXG | stat.S_IRWXO)
 
+    def make_corpus_dir(self, path):
+        """Making a directory that will hold the files, including the corpus
+           and the matrix files.
+        """
+        os.makedirs(path)
+        self.chmod_fd(path)
+
     def mkdir_mtrx(self):
         """ Making the directory for matrix files. """
         _wf = os.path.join(self.path['matrix'], 'wf')
@@ -211,7 +219,7 @@ class CorpusMatrix(object):
         self.chmod_fd(_wf)
 
     def mkdir_corpus(self):
-        """ Making the directory for matrix files. """
+        """ Making the directory for corpus files. """
         path = self.path['corpus']
         os.makedirs(path)
         self.chmod_fd(path)

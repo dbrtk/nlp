@@ -7,3 +7,8 @@ theano
 nltk
 langdetect
 pycountry
+
+celery
+
+requests
+Django

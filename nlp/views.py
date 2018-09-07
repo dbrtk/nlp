@@ -161,6 +161,17 @@ def features_and_docs(path: str = None,
     return json_obj, docs_obj
 
 
+def call_factorize(path: str = None,
+                   feats: int = 25,
+                   corpusid: str = None,
+                   words: int = 6,
+                   docs_per_feat: int = 3,
+                   feats_per_doc: int = 3):
+    data = CorpusMatrix(path=path, featcount=feats, corpusid=corpusid)
+    data.call_factorize(feature_number=feats, iterate=config.MAX_ITERATE)
+    return True
+
+
 def get_features_count(path: str = None):
     """ Returns the feature number that have been computed for this corpus. """
     return CorpusMatrix(path=path).available_feats
