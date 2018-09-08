@@ -75,7 +75,7 @@ class TextFile(object):
             self.set_stopwords(lang)
 
         if self.lem:
-            # this is only executer when a lemmatizer is defined on self.lem
+            # this is only executed when a lemmatizer is defined on self.lem
             return docid, self.lemmatize_txt(), self.info
         return docid, self.process_txt(), self.info
 
@@ -172,7 +172,7 @@ class TextFile(object):
 
 def separatewords(text):
 
-    splitter = re.compile(r'\W*')
+    splitter = re.compile(r'\W+')
     return [s.lower() for s in splitter.split(text)]
 
 

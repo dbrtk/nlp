@@ -117,6 +117,7 @@ def compute_matrices(self, **kwds):
     local_path = sync_corpus_data(corpusid=kwds.get('corpusid'),
                                   unique_id=unique_id,
                                   remote_path=kwds.get('path'))
+
     features_and_docs(
         path=local_path,
         feats=kwds.get('feats'),

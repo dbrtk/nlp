@@ -232,6 +232,7 @@ class CorpusMatrix(object):
 
     def make_matrices(self):
         """ Making and saving to disk all the matrices necessary to . """
+
         self.__get_words()
         self.__makematrix()
         self.__make_vectors()

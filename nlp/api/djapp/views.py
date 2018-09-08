@@ -67,10 +67,6 @@ def generate_features_weights(request):
 def get_features_and_docs(request):
 
     params = json.loads(request.body)
-
-    print('get_features_and_docs')
-    print(params)
-
     features, docs = features_and_docs(**params)
 
     return JsonResponse({
