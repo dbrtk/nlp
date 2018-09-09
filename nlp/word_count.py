@@ -142,7 +142,7 @@ class TextFile(object):
             out[lemma] += 1
 
             self.lemma_word.setdefault(lemma, [])
-            if not word in self.lemma_word[lemma]:
+            if word not in self.lemma_word[lemma]:
                 self.lemma_word[lemma].append(word)
 
             self.allwords.setdefault(lemma, 0)
