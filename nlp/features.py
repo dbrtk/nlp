@@ -1,7 +1,6 @@
 
 import os
 import re
-import pprint
 
 import numpy
 
@@ -9,7 +8,7 @@ from . import clusters
 from . import nmf
 
 CORPUSPATH = None
-PRINTER = pprint.PrettyPrinter(indent=4)
+
 
 
 def separatewords(text):
@@ -164,11 +163,8 @@ def main():
     # clustjson, depth = clusters.hcluster_to_json(clust, labels=articletitles)
 
     v = numpy.matrix(wordmatrix)
-    print(v)
     weights, feat = nmf.factorize(v, pc=20, iter=100)
 
-    print(feat)
-    print(weights)
 
     topp, pn = showfeatures(weights, feat, articletitles, wordvec)
 

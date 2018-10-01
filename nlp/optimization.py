@@ -28,17 +28,19 @@ def printschedule(r):
         origin = people[d][1]
         out = flights[(origin, destination)][r[d]]
         ret = flights[(destination, origin)][r[d + 1]]
-        print('%10s%10s %5s-%5s $%3s %5s-%5s $%3s' % (name, origin,
-                                                      out[0], out[1], out[2],
-                                                      ret[0], ret[1], ret[2])
-              )
+        # print('%10s%10s %5s-%5s $%3s %5s-%5s $%3s' % (name, origin,
+        #                                               out[0], out[1], out[2],
+        #                                               ret[0], ret[1], ret[2])
+        #       )
 
 
 def schedulecost(sol):
     totalprice = 0
     latestarrival = 0
     earliestdep = 24 * 60
-    print('sol is: {}'.format(sol))
+
+    # print('sol is: {}'.format(sol))
+
     for d in range(int(len(sol) / 2)):
         # Get the inbound and outbound flights
         origin = people[d][1]
@@ -116,8 +118,9 @@ def annealingoptimize(domain, costf, T=10000.0, cool=0.95, step=1):
     # Initialize the values randomly
     vec = [float(random.randint(domain[i][0], domain[i][1]))
            for i in range(len(domain))]
-    print(vec)
-    print(domain)
+    # print(vec)
+    # print(domain)
+
     while T > 0.1:
         # Choose one of the indices
         i = random.randint(0, len(domain) - 1)
@@ -224,7 +227,7 @@ def geneticoptimize(domain, costf, popsize=50, step=1,
                 pop.append(crossover(ranked[c1], ranked[c2]))
 
         # Print current best score
-        print(scores[0][0])
+        # print(scores[0][0])
     return scores[0][1]
 
 

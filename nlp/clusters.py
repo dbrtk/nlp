@@ -1,12 +1,10 @@
 
 from math import sqrt
-import pprint
 import random
 
 from PIL import Image, ImageDraw
 
 VERBOSE = 0
-PRINTER = pprint.PrettyPrinter(indent=4)
 
 
 def pearson(v1, v2):
@@ -122,16 +120,20 @@ def readfile(filename):
 def printclust(clust, labels=None, n=0):
     # indent to make a hierarchy layout
     for i in range(n):
-        print(' '),
+        pass
+        # print(' '),
     if clust.id < 0:
         # negative id means that this is branch
-        print('-')
+        # print('-')
+        pass
     else:
         # positive id means that this is an endpoint
         if labels is None:
-            print(clust.id)
+            # print(clust.id)
+            pass
         else:
-            print(labels[clust.id])
+            pass
+            # print(labels[clust.id])
     # now print the right and left branches
     if clust.left is not None:
         printclust(clust.left, labels=labels, n=n + 1)
@@ -289,7 +291,8 @@ def kcluster(rows, distance=pearson, k=4):
     lastmatches = None
     for t in range(100):
         if VERBOSE:
-            print('Iteration %d' % t)
+            pass
+            # print('Iteration %d' % t)
         bestmatches = [[] for i in range(k)]
         # Find which centroid is the closest for each row
         for j in range(len(rows)):
@@ -321,9 +324,9 @@ def kcluster(rows, distance=pearson, k=4):
 def print_clusters(kclust, rows):
     """Printing the clusters."""
     for k in kclust:
-        print('\n')
-        print([rows[_] for _ in k])
-
+        # print('\n')
+        # print([rows[_] for _ in k])
+        pass
 
 def get_clusters(kclust, rows):
     """Getting the titles for the clusters."""
@@ -387,7 +390,8 @@ def scaledown(data, distance=pearson, rate=0.01):
                 # Keep track of the total error
                 totalerror += abs(errorterm)
         if VERBOSE:
-            print(totalerror)
+            pass
+            # print(totalerror)
 
         # If the answer got worse by moving the points, we are done
         if lasterror and lasterror < totalerror:

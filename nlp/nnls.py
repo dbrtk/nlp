@@ -395,7 +395,7 @@ def column_group_sub(B, i, cols):
 
 
 def _test_column_grouping(m=10, n=5000, num_repeat=5, verbose=False):
-    print('\nTesting column_grouping ...\n')
+    # print('\nTesting column_grouping ...\n')
     A = np.array([[True, False, False, False, False],
                   [True, True, False, True, True]])
     grps1 = _column_group_loop(A)
@@ -403,10 +403,10 @@ def _test_column_grouping(m=10, n=5000, num_repeat=5, verbose=False):
     grps3 = [np.array([0]),
              np.array([1, 3, 4]),
              np.array([2])]
-    print('OK' if all([np.array_equal(a, b)
-                       for (a, b) in zip(grps1, grps2)]) else 'Fail')
-    print('OK' if all([np.array_equal(a, b)
-                       for (a, b) in zip(grps1, grps3)]) else 'Fail')
+    # print('OK' if all([np.array_equal(a, b)
+    #                    for (a, b) in zip(grps1, grps2)]) else 'Fail')
+    # print('OK' if all([np.array_equal(a, b)
+    #                    for (a, b) in zip(grps1, grps3)]) else 'Fail')
 
     for i in iter(range(0, num_repeat)):
         A = np.random.rand(m, n)
@@ -418,10 +418,12 @@ def _test_column_grouping(m=10, n=5000, num_repeat=5, verbose=False):
         grps2 = _column_group_recursive(B)
         elapsed_recursive = time.time() - start
         if verbose:
-            print('Loop     :', elapsed_loop)
-            print('Recursive:', elapsed_recursive)
-        print('OK' if all([np.array_equal(a, b)
-                           for (a, b) in zip(grps1, grps2)]) else 'Fail')
+            pass
+            # print('Loop     :', elapsed_loop)
+            # print('Recursive:', elapsed_recursive)
+        # print('OK' if all([np.array_equal(a, b)
+        #                    for (a, b) in zip(grps1, grps2)]) else 'Fail')
+
     # sorted_idx = np.concatenate(grps)
     # print B
     # print sorted_idx
@@ -430,7 +432,7 @@ def _test_column_grouping(m=10, n=5000, num_repeat=5, verbose=False):
 
 
 def _test_normal_eq_comb(m=10, k=3, num_repeat=5):
-    print('\nTesting normal_eq_comb() ...\n')
+    # print('\nTesting normal_eq_comb() ...\n')
     for i in iter(range(0, num_repeat)):
         A = np.random.rand(2 * m, m)
         X = np.random.rand(m, k)
@@ -440,12 +442,12 @@ def _test_normal_eq_comb(m=10, k=3, num_repeat=5):
         B = A.T.dot(B)
         A = A.T.dot(A)
         Sol, a, b = normal_eq_comb(A, B, C)
-        print('OK' if np.allclose(X, Sol) else 'Fail')
+        # print('OK' if np.allclose(X, Sol) else 'Fail')
     return
 
 
 def _test_nnlsm():
-    print('\nTesting nnls routines ...\n')
+    # print('\nTesting nnls routines ...\n')
     m = 100
     n = 10
     k = 200
@@ -467,16 +469,16 @@ def _test_nnlsm():
         C1, info = nnlsm_blockpivot(A, B)
         elapsed2 = time.time() - start
         rel_norm2 = nla.norm(C1 - X_org) / nla.norm(X_org)
-        print('nnlsm_blockpivot:    ', 'OK  ' if info[0] else 'Fail',
-              'elapsed:{0:.4f} error:{1:.4e}'.format(elapsed2, rel_norm2))
+        # print('nnlsm_blockpivot:    ', 'OK  ' if info[0] else 'Fail',
+        #       'elapsed:{0:.4f} error:{1:.4e}'.format(elapsed2, rel_norm2))
 
         start = time.time()
         C2, info = nnlsm_activeset(A, B)
         num_backup = 0
         elapsed1 = time.time() - start
         rel_norm1 = nla.norm(C2 - X_org) / nla.norm(X_org)
-        print('nnlsm_activeset:     ', 'OK  ' if info[0] else 'Fail',
-              'elapsed:{0:.4f} error:{1:.4e}'.format(elapsed1, rel_norm1))
+        # print('nnlsm_activeset:     ', 'OK  ' if info[0] else 'Fail',
+        #       'elapsed:{0:.4f} error:{1:.4e}'.format(elapsed1, rel_norm1))
 
         import scipy.optimize as opt
         start = time.time()
@@ -486,14 +488,14 @@ def _test_nnlsm():
             C3[:, i] = res[0]
         elapsed3 = time.time() - start
         rel_norm3 = nla.norm(C3 - X_org) / nla.norm(X_org)
-        print('scipy.optimize.nnls: ', 'OK  ',
-              'elapsed:{0:.4f} error:{1:.4e}'.format(elapsed3, rel_norm3))
+        # print('scipy.optimize.nnls: ', 'OK  ',
+        #       'elapsed:{0:.4f} error:{1:.4e}'.format(elapsed3, rel_norm3))
 
         if num_backup > 0:
             break
         if rel_norm1 > 10e-5 or rel_norm2 > 10e-5 or rel_norm3 > 10e-5:
             break
-        print('')
+        # print('')
 
 
 if __name__ == '__main__':

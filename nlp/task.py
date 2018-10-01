@@ -1,14 +1,14 @@
 import json
 import os
 import shlex
-import shutil
+# import shutil
 import subprocess
 import uuid
 
 from celery import shared_task
 import requests
 
-from .config import CORPUS_COMPUTE_CALLBACK, CORPUS_NLP_CALLBACK
+from .config import CORPUS_COMPUTE_CALLBACK, CORPUS_NLP_CALLBACK, DATA_ROOT
 from .matrix_files import sync_corpus_data
 from .views import call_factorize, features_and_docs
 
@@ -57,15 +57,26 @@ def factorize_matrices(self,
                        docs_per_feat: int = 0,
                        feats_per_doc: int = 3,
                        dir_id: str = None):
+    
+    local_path = os.path.join(DATA_ROOT, dir_id)
 
     out = {'corpusid': corpusid,
            'path': path,
+           'local_path': local_path,
            'feats': feats,
            'error': False,
            'dir_id': dir_id}
+    
+    sync_corpus_data(
+        unique_id=dir_id,
+        corpusid=corpusid,
+        remote_path=path,
+        get=False,
+        get_vectors=True)
+
     try:
         call_factorize(
-            path=path,
+            path=local_path,
             feats=feats,
             corpusid=corpusid,
             words=words,
@@ -86,17 +97,16 @@ def gen_matrices_callback(self, res):
     path = res.get('path')
     feats = res.get('feats')
     error = res.get('error')
+    local_path = res.get('local_path')
+    dir_id = res.get('dir_id')
 
-    _path = os.path.join(path, 'matrix', 'wf', str(feats))
-
-    command = 'tar -zcvf %(path)s.tar.gz -C %(path)s .' % {'path': _path}
-
-    res = subprocess.run(
-        shlex.split(command),
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
-        check=True
-    )
+    os.remove(os.path.join(local_path, 'matrix', 'vectors.npy'))
+    
+    local_path = sync_corpus_data(
+        unique_id=dir_id,
+        corpusid=corpusid,
+        remote_path=path,
+        get=False)
 
     requests.post(CORPUS_NLP_CALLBACK, data={
         'payload': json.dumps({
@@ -104,12 +114,11 @@ def gen_matrices_callback(self, res):
             'feats': feats,
             'error': True if error else False,
             'path': path
-        })}, files={'file': open('%s.tar.gz' % (_path), 'rb')})
-
-    shutil.rmtree(path)
+        })})
 
 
-@shared_task(bind=True)
+
+@shared_task(bind=True, time_limit=900)
 def compute_matrices(self, **kwds):
 
     unique_id = uuid.uuid4().hex
@@ -140,7 +149,7 @@ def compute_matrices(self, **kwds):
 @shared_task(bind=True)
 def compute_matrices_callback(self, data):
 
-    shutil.rmtree(data.get('local_path'))
+    # shutil.rmtree(data.get('local_path'))
 
     requests.post(CORPUS_COMPUTE_CALLBACK, json={
         'corpusid': data.get('corpusid'),

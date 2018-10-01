@@ -28,7 +28,7 @@ def handle_uploaded_file(path, binary_file, dtype, shape):
 def compute_matrices(request):
 
     params = json.loads(request.body)
-
+    
     task.compute_matrices.apply_async(
         kwargs=params,
         link=task.compute_matrices_callback.s())
@@ -42,20 +42,6 @@ def generate_features_weights(request):
     corpusid = params.get('corpus_id')
 
     dir_id = uuid.uuid4().hex
-
-    path = os.path.join(config.DATA_ROOT, dir_id)
-    inst = CorpusMatrix(
-        path=path, featcount=params.get('feats'), corpusid=corpusid)
-
-    file_path = handle_uploaded_file(
-        inst.file_path('vectors'),
-        request.FILES['file'],
-        params.pop('dtype'),
-        params.pop('shape'))
-
-    inst.chmod_fd(file_path)
-
-    params['path'] = path
     params['dir_id'] = dir_id
 
     task.factorize_matrices.apply_async(
@@ -101,11 +87,6 @@ def remove_feature(request):
 
 
 def test_celery(request):
-
-    print('test the celery task!')
-    print(request)
-    print(task.test_task)
-    print(task.test_task.delay)
 
     res = task.test_task.apply_async(args=[1, 22345345]).get()
 

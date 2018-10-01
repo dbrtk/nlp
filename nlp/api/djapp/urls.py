@@ -25,5 +25,5 @@ urlpatterns = [
     # path('dendogram', views.dendogram, name='dendogram'),
 
 
-    # path('test-celery', views.test_celery, name='testcelery'),
+    path('test-celery', views.test_celery, name='testcelery'),
 ]

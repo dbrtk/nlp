@@ -322,8 +322,7 @@ class CorpusMatrix(object):
     def __factorize(self, iterate=50, feature_number=25):
         """Calling the factorization of the matrix in order to retrieve 2
            matrices; 1 containing features; the other one containing weights.
-        """
-        print("__factorize is called, feats: {}".format(feature_number))
+        """        
         vectors = self.vectors
         inst = nmf.NMF_ANLS_BLOCKPIVOT(
             max_iter=iterate,

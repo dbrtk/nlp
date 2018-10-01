@@ -3,6 +3,7 @@ import os
 import re
 
 import langdetect
+import nltk
 from nltk import pos_tag, word_tokenize
 from nltk.corpus import stopwords, wordnet
 from nltk.stem.snowball import SnowballStemmer
@@ -11,7 +12,11 @@ import pycountry
 import requests
 
 from .config import (
-    CORPUS_ENDPOINT, CORPUS_LEMMA_WORDS_PATH, STOPWORD_REPLACEMENT)
+    CORPUS_ENDPOINT, CORPUS_LEMMA_WORDS_PATH, NLTK_DATA_PATH,
+    STOPWORD_REPLACEMENT)
+
+nltk.data.path.append(NLTK_DATA_PATH)
+del nltk
 
 
 def get_wordnet_pos(treebank_tag):

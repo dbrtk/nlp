@@ -114,7 +114,7 @@ def _test_nmf_anls_blockpivot():
     alg = NMF_ANLS_BLOCKPIVOT(main_matrix=A, feats_number=k, max_iter=100)
     results = alg.factorize()
 
-    print(results)
+    return results
 
 
 if __name__ == '__main__':
