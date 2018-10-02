@@ -9,10 +9,13 @@ DEFAULT_LANGUAGE = 'english'
 STOPWORD_REPLACEMENT = "___"
 
 
-PROXIMITY_BOT_HOSTNAME = 'proximity-bot.net'
+PROXIMITY_BOT_HOSTNAME = 'localhost:5000'
 
-PROXIMITY_BOT_HOST = 'http://proximity-bot.net'
-PROXIMITY_USER = 'queeliot'
+# PROXIMITY_BOT_HOST = 'http://proximity-bot.net'
+PROXIMITY_BOT_HOST = 'localhost:5000'
+
+# PROXIMITY_USER = 'queeliot'
+PROXIMITY_USER = 'dominik'
 
 CORPUS_ENDPOINT = '/'.join([PROXIMITY_BOT_HOST, 'corpus'])
 
