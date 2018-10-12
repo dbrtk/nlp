@@ -21,7 +21,7 @@ def readfile(filename):
 
 
 def main():
-    _ = '/home/dominik/Desktop/wiki/wikipedia/'
+    _ = '/path/to/corpus'
     corpus_path = os.path.normpath(os.path.abspath(_))
     if not os.path.isdir(corpus_path):
         raise ValueError(corpus_path)

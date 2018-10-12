@@ -9,11 +9,8 @@ from nltk.corpus import stopwords, wordnet
 from nltk.stem.snowball import SnowballStemmer
 from nltk.stem import WordNetLemmatizer
 import pycountry
-import requests
 
-from .config import (
-    CORPUS_ENDPOINT, CORPUS_LEMMA_WORDS_PATH, NLTK_DATA_PATH,
-    STOPWORD_REPLACEMENT)
+from .config import NLTK_DATA_PATH, STOPWORD_REPLACEMENT
 
 nltk.data.path.append(NLTK_DATA_PATH)
 del nltk

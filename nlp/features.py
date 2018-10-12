@@ -121,7 +121,7 @@ def showarticles(titles, toppatterns, patternnames, out='articles.txt'):
 
 
 def circular_tree(path_to_data):
-    set_corpus('/home/dominik/Desktop/wiki/tiny/')
+    set_corpus('/path/to/corpus')
 
     allwords, articlewords, articletitles = get_words()
 
@@ -151,8 +151,7 @@ def set_corpus(path):
 
 
 def main():
-    # _ = '/home/dominik/Desktop/wiki/wikipedia/'
-    _ = '/home/dominik/Desktop/wiki/tiny/'
+    _ = '/path/to/corpus/'
 
     set_corpus(_)
     allwords, articlewords, articletitles = get_words()

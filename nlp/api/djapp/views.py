@@ -8,8 +8,7 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import numpy
 
-from ... import config, task
-from ...data import CorpusMatrix
+from ... import task
 from ...views import features_and_docs
 
 
@@ -26,7 +25,9 @@ def handle_uploaded_file(path, binary_file, dtype, shape):
 
 @csrf_exempt
 def compute_matrices(request):
-
+    """Computing matrices and generating features/weights for a given feature
+       number.
+    """
     params = json.loads(request.body)
     
     task.compute_matrices.apply_async(

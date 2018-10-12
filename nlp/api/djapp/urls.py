@@ -6,9 +6,6 @@ from . import views
 
 
 urlpatterns = [
-    # Examples:
-    # url(r'^$', 'thesite.views.home', name='home'),
-    # url(r'^blog/', include('blog.urls')),
 
     path('compute-matrices', views.compute_matrices, name='generate_matrices'),
 

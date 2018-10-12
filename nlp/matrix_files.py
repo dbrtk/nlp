@@ -2,7 +2,7 @@ import os
 import shlex
 import subprocess
 
-from .config import (DATA_ROOT, PROXIMITY_BOT_HOSTNAME, PROXIMITY_USER,
+from .config import (DATA_ROOT, PROXIMITYBOT_HOST_NAME, PROXIMITY_USER,
                      RSYNC_GET_DATA, RSYNC_GET_VECTORS, RSYNC_POST_DATA)
 
 
@@ -21,11 +21,11 @@ def sync_corpus_data(
         command = RSYNC_GET_DATA
     else:
         command = RSYNC_POST_DATA
-    
+
     res = subprocess.run(
         shlex.split("%(command)s %(host)s %(user)s %(remote)s %(local)s" % {
             'command': command,
-            'host': PROXIMITY_BOT_HOSTNAME,
+            'host': PROXIMITYBOT_HOST_NAME,
             'user': PROXIMITY_USER,
             'remote': remote_path,
             'local': local_path

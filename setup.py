@@ -6,7 +6,6 @@ from setuptools import find_packages, setup
 HERE = path.abspath(path.dirname(__file__))
 
 
-
 with open('requirements.txt') as _file:
 
     requirements = []
@@ -14,7 +13,6 @@ with open('requirements.txt') as _file:
         package = package.strip()
         if package:
             requirements.append(package)
-
 
 setup(
     name='nlp',
@@ -25,7 +23,7 @@ setup(
     url='http://dbrtk.net',
 
     author='Dominik Bartkowski',
-    author_email='dominik@dbrtk.net',
+    author_email='dominik.bartkowski@gmail.com',
 
     classifiers=[
 
