@@ -1,3 +1,8 @@
+""" Copying matrix files from the file server (the one that runs rmxbot) to the
+    nlp server. This module uses rmxbin (https://github.com/dbrtk/rmxbin) to
+    do this.
+"""
+
 import os
 import shlex
 import subprocess

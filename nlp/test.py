@@ -87,12 +87,6 @@ def purge():
     data.delete_matrices('weights', 'feat')
 
 
-def count_feats():
-    _ = '/path/to/corpus/'
-    data = CorpusMatrix(path=_)
-    data.available_feats
-
-
 if __name__ == "__main__":
     get_features_old()
     # get_feats_view()

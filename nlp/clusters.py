@@ -289,6 +289,7 @@ def kcluster(rows, distance=pearson, k=4):
     clusters = [[random.random() * (ranges[i][1] - ranges[i][0]) + ranges[i][0]
                  for i in range(len(rows[0]))] for j in range(k)]
     lastmatches = None
+    bestmatches = []
     for t in range(100):
         if VERBOSE:
             pass
@@ -327,6 +328,7 @@ def print_clusters(kclust, rows):
         # print('\n')
         # print([rows[_] for _ in k])
         pass
+
 
 def get_clusters(kclust, rows):
     """Getting the titles for the clusters."""

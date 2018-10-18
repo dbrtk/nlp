@@ -5,10 +5,10 @@ import re
 import numpy
 
 from . import clusters
-from . import nmf
+from . import simple_nmf as nmf
 
-CORPUSPATH = None
 
+CORPUSPATH = '/path/to/corpus'
 
 
 def separatewords(text):
@@ -17,7 +17,7 @@ def separatewords(text):
     return [s.lower() for s in splitter.split(text) if len(s) > 3]
 
 
-def get_words(corpus: str = None):
+def get_words(corpus: str = None) -> (dict, list, list):
     """Getting the words from a given corpora."""
     allwords = {}
     articlewords = []
@@ -163,7 +163,6 @@ def main():
 
     v = numpy.matrix(wordmatrix)
     weights, feat = nmf.factorize(v, pc=20, iter=100)
-
 
     topp, pn = showfeatures(weights, feat, articletitles, wordvec)
 

@@ -5,8 +5,8 @@ import uuid
 from celery import shared_task
 import requests
 
-from .config import (CORPUS_COMPUTE_CALLBACK, CORPUS_NLP_CALLBACK, DATA_ROOT,
-                     PROXIMITYBOT_IS_REMOTE)
+from .config import CORPUS_COMPUTE_CALLBACK, CORPUS_NLP_CALLBACK, DATA_ROOT
+
 from .matrix_files import sync_corpus_data
 from .views import call_factorize, features_and_docs
 
