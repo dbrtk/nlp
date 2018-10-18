@@ -6,33 +6,6 @@ from . import config, clusters, features, nmf
 from .data import CorpusMatrix
 
 
-def simple_dendogram(path: str = None,
-                     feats: int = 25,
-                     corpusid: str = None):
-    """Returns the data for a dendogram. Used for testing purposes."""
-
-    data = CorpusMatrix(path=path, featcount=feats, corpusid=corpusid)
-    data()
-    available_feats = data.available_feats
-    try:
-        next(_.get('featcount') for _ in available_feats
-             if feats == int(_.get('featcount')))
-    except StopIteration:
-        data.call_factorize(feature_number=feats, iterate=config.MAX_ITERATE)
-
-    # todo(): clean-up!
-    # todo(): implement the dendogram
-    # features.set_corpus(corpus_path)
-
-    # allwords, articlewords, articletitles = features.get_words()
-    # wordmatrix, wordvec = features.makematrix(allwords, articlewords)
-
-    clust = clusters.hcluster(data.wordmatrix)
-    clust, depth = clusters.hcluster_to_json(clust, labels=data.doctitles)
-
-    return clust, depth
-
-
 def kmeans_clust(path, k: int = 10):
     """ Given a corpus and the number of groups (k), returns a kmeans cluster.
     """
@@ -45,24 +18,6 @@ def kmeans_clust(path, k: int = 10):
 
     return clusters.get_clusters(
         clusters.kcluster(wordmatrix, k=k), articletitles)
-
-
-def independent_features(corpus_path: str = None, features_count: int = 10):
-    """ Extracting independent features form the corpus. This function should
-        remain in order to keep track of how feature extraction works (calls).
-    """
-
-    features.set_corpus(corpus_path)
-
-    allwords, articlewords, articletitles = features.get_words()
-
-    wordmatrix, wordvec = features.makematrix(allwords, articlewords)
-
-    v = numpy.matrix(wordmatrix)
-    weights, feat = nmf.factorize(v, pc=features_count, iter=50)
-
-    topp, pn = features.showfeatures(weights, feat, articletitles, wordvec)
-    features.showarticles(articletitles, topp, pn)
 
 
 def features_to_json(w, h, titles, wordvec, feature_words: int = 6,
@@ -140,7 +95,7 @@ def features_and_docs(path: str = None,
                       words: int = 6,
                       docs_per_feat: int = 3,
                       feats_per_doc: int = 3):
-    """ Returning features and docs. """
+    """ Returning features and docs. This method will compute all the matrices. """
 
     data = CorpusMatrix(path=path, featcount=feats, corpusid=corpusid)
     data()
@@ -167,25 +122,13 @@ def call_factorize(path: str = None,
                    words: int = 6,
                    docs_per_feat: int = 3,
                    feats_per_doc: int = 3):
+    """ This function is called to factorize matrices, given a features number. """
     data = CorpusMatrix(path=path, featcount=feats, corpusid=corpusid)
     data.call_factorize(feature_number=feats, iterate=config.MAX_ITERATE)
     return True
-
-
-def get_features_count(path: str = None):
-    """ Returns the feature number that have been computed for this corpus. """
-    return CorpusMatrix(path=path).available_feats
 
 
 def remove_feature(**kwds):
 
     data = CorpusMatrix(**kwds)
     data.remove_featdir()
-
-
-def generate_matrices(path):
-    """ Generating basic matrices. """
-    data = CorpusMatrix(path=path)
-    vec = data.getnerate_basic_matrices()
-    # todo(): check vectors
-    return vec

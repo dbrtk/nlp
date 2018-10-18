@@ -1,26 +1,14 @@
 
 
 import json
-import os
 import uuid
 
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-import numpy
 
 from ... import task
 from ...views import features_and_docs
 
-
-def handle_uploaded_file(path, binary_file, dtype, shape):
-
-    dtype = numpy.dtype(dtype)
-
-    numpy.save(path, numpy.fromfile(binary_file, dtype=dtype).reshape(shape))
-
-    if not os.path.isfile('%s.npy' % path):
-        raise RuntimeError('%s.npy' % path)
-    return '%s.npy' % path
 
 
 @csrf_exempt

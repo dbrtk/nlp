@@ -204,15 +204,15 @@ def hcluster_to_json(clust, labels=None):
     """Turning a cluster to a json object with children.
     Example of the returned object:
     {
-        name: 'DendoPferdle',
+        name: 'TheName',
         children: [
             {
-                name: "first DendoPferdle's child",
+                name: "first TheName's child",
                 children: [
                     {...}, {...}, {...}
                 ]
             }, {
-                name: "second DendoPferdle's child",
+                name: "second TheName's child",
                 children: [
                     {...}, {...}, {...}
                 ]
