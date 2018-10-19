@@ -28,5 +28,19 @@ cd nlp
 pip install -e .
 cd
 ```
+5. Create a directory where nlp will store some data and save text files. 
 
-Nlp can be connected to a django project, it contains a django app (https://github.com/dbrtk/nlp/tree/master/nlp/api/djapp). There is a sample of a django project in proximity-bot (https://github.com/dbrtk/proximity-bot).
+Nlp can be connected to a django project, it contains a django app (https://github.com/dbrtk/nlp/tree/master/nlp/api/djapp). There is a sample of a django project in proximity-bot (https://github.com/dbrtk/proximity-bot). Before running NLP, it is very important to update some variables in the configuraiton file (section below).
+
+### Configuration file
+
+The configuration file can be found within the nlp package (https://github.com/dbrtk/nlp/blob/master/nlp/config/__init__.py). The variables that need to be updated are:
+* `PROXIMITYBOT_IS_REMOTE` - (https://github.com/dbrtk/nlp/blob/master/nlp/config/__init__.py#L12). this variable defines whether proximity-bot runs on a separate server;
+* `PROXIMITYBOT_HOST_NAME` - host name of the proximity-bot server;
+* `PROXIMITYBOT_ENDPOINT` - http endpoint to the proximity-bot server;
+* `DATA_ROOT` - path where nlp can store files and matrices when processing materials. A data directory can exist under: 
+os.path.join(os.environ['HOME'], 'data'. This directory should be created by user (see above); 
+* `RSYNC_SCRIPTS_PATH` - path to the location of rmxbin (https://github.com/dbrtk/rmxbin);
+* `NLTK_DATA_PATH` - path to the directory that holds nltk data.
+
+
