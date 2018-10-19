@@ -48,7 +48,7 @@ python -m nltk.downloader wordnet -d /path/to/nltk_data
 In the latter case '/path/to/data' should be replaced with a real path. 
 
 
-Nlp can be connected to a django project, it contains a django app (https://github.com/dbrtk/nlp/tree/master/nlp/api/djapp). There is a sample of a django project in proximity-bot (https://github.com/dbrtk/proximity-bot). Before running NLP, it is very important to update some variables in the configuraiton file (section below).
+Nlp can be connected to a django project, it contains a django app (https://github.com/dbrtk/nlp/tree/master/nlp/api/djapp). There is a sample of a django project in proximity-bot (https://github.com/dbrtk/proximity-bot). Before running NLP, some variables should be updated in the configuraiton file (section below).
 
 ### Configuration file
 
