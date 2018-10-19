@@ -29,12 +29,14 @@ pip install -e .
 cd
 ```
 5. Create a directory where nlp will store some data and save text files. 
-6. One of the requirements of nlp is nltk (Natural Language Toolkit); it will be installed along with other packages. But it is imoportant to download the nltk-data. Download nltk_data:
+6. One of the requirements is nltk (Natural Language Toolkit); it will be installed along with other packages. But it is imoportant to download nltk_data:
 ```
+. env/bin/activate
 python -m nltk.downloader all
 ```
 OR
 ```
+. env/bin/activate
 python -m nltk.downloader all -d /path/to/nltk_data
 
 ```
