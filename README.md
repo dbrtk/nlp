@@ -29,6 +29,15 @@ pip install -e .
 cd
 ```
 5. Create a directory where nlp will store some data and save text files. 
+6. One of the requirements of nlp is nltk (Natural Language Toolkit); it will be installed along with other packages. But it is imoportant to download the nltk-data. Download nltk_data:
+```
+python -m nltk.downloader all
+```
+OR
+```
+python -m nltk.downloader all -d /path/to/nltk_data
+
+```
 
 Nlp can be connected to a django project, it contains a django app (https://github.com/dbrtk/nlp/tree/master/nlp/api/djapp). There is a sample of a django project in proximity-bot (https://github.com/dbrtk/proximity-bot). Before running NLP, it is very important to update some variables in the configuraiton file (section below).
 
