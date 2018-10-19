@@ -7,6 +7,8 @@ DEFAULT_LANGUAGE = 'english'
 
 STOPWORD_REPLACEMENT = "___"
 
+# Defines whether proximity-bot with rmxbot are run on a remote server. If 
+# set to True, proximity-bot should be accessed on a different machine
 PROXIMITYBOT_IS_REMOTE = False
 
 PROXIMITYBOT_HOST_NAME = 'localhost:5000'
