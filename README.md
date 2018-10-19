@@ -32,14 +32,21 @@ cd
 6. One of the requirements is nltk (Natural Language Toolkit); it will be installed along with other packages. But it is imoportant to download nltk_data:
 ```
 . env/bin/activate
-python -m nltk.downloader all
+python -m nltk.downloader stopwords
+python -m nltk.downloader punkt
+python -m nltk.downloader average_perceptron_tags
+python -m nltk.downloader wordnet
 ```
 OR
 ```
 . env/bin/activate
-python -m nltk.downloader all -d /path/to/nltk_data
-
+python -m nltk.downloader stopwords -d /path/to/nltk_data
+python -m nltk.downloader punkt -d /path/to/nltk_data
+python -m nltk.downloader average_perceptron_tags -d /path/to/nltk_data
+python -m nltk.downloader wordnet -d /path/to/nltk_data
 ```
+In the latter case '/path/to/data' should be replaced with a real path. 
+
 
 Nlp can be connected to a django project, it contains a django app (https://github.com/dbrtk/nlp/tree/master/nlp/api/djapp). There is a sample of a django project in proximity-bot (https://github.com/dbrtk/proximity-bot). Before running NLP, it is very important to update some variables in the configuraiton file (section below).
 
