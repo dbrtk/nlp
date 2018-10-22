@@ -14,10 +14,10 @@ STOPWORD_REPLACEMENT = "___"
 
 PROXIMITYBOT_IS_REMOTE = False
 
-PROXIMITYBOT_HOST_NAME = 'localhost:5000'
+PROXIMITYBOT_HOST_NAME = 'localhost:8000'
 
 # PROXIMITYBOT_ENDPOINT = 'http://proximity-bot.net'
-PROXIMITYBOT_ENDPOINT = 'http://localhost:5000'
+PROXIMITYBOT_ENDPOINT = 'http://localhost:8000'
 
 PROXIMITY_USER = 'username'
 
