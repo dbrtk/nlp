@@ -1,5 +1,10 @@
 import os
 
+from django.conf import settings
+
+# PROXIMITY_BOT_PROJ is specific to the local deployment of proximity-bot.
+PROXIMITY_BOT_PROJ = settings.PROJECT_DIR
+
 MAX_ITERATE = 100
 
 # language processing (detection)
@@ -29,14 +34,13 @@ CORPUS_COMPUTE_CALLBACK = '{}/'.format(_CORPUS_COMPUTE_CALLBACK)
 CORPUS_LEMMA_WORDS_PATH = 'lemma-words'
 
 # the place where nlp will store its temporary files; i.e. matrices, corpora.
-DATA_ROOT = os.path.join(os.environ['HOME'], 'www', 'nlp')
+DATA_ROOT = os.path.join(PROXIMITY_BOT_PROJ, 'data', 'nlp')
 # DATA_ROOT = os.path.abspath('/data')
 
 
 # RSYNC_SCRIPTS_PATH = os.path.abspath('/opt/rmxbin')
 # These are small shell scripts from rmxbin.
-RSYNC_SCRIPTS_PATH = os.path.join(
-    os.environ['HOME'], 'Projects', 'proximity-bot', 'rmxbin')
+RSYNC_SCRIPTS_PATH = os.path.join(PROXIMITY_BOT_PROJ, 'bin', 'rmxbin')
 
 __LOCAL_REMOTE = 'remote' if PROXIMITYBOT_IS_REMOTE else 'local'
 
