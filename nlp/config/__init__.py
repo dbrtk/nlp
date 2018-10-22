@@ -53,4 +53,4 @@ RSYNC_POST_DATA = os.path.join(
 
 # nltk confiigs
 # NLTK_DATA_PATH = '/opt/nltk_data'
-NLTK_DATA_PATH = os.path.join(os.environ['HOME'], 'nltk_data')
+NLTK_DATA_PATH = os.path.join(PROXIMITY_BOT_PROJ, 'bin', 'nltk_data')
