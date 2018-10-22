@@ -42,7 +42,7 @@ OR
 . env/bin/activate
 python -m nltk.downloader stopwords -d /path/to/nltk_data
 python -m nltk.downloader punkt -d /path/to/nltk_data
-python -m nltk.downloader average_perceptron_tags -d /path/to/nltk_data
+python -m nltk.downloader averaged_perceptron_tags -d /path/to/nltk_data
 python -m nltk.downloader wordnet -d /path/to/nltk_data
 ```
 In the latter case '/path/to/data' should be replaced with a real path. 
