@@ -14,10 +14,11 @@ STOPWORD_REPLACEMENT = "___"
 
 PROXIMITYBOT_IS_REMOTE = False
 
-PROXIMITYBOT_HOST_NAME = 'localhost:8000'
+# proximity-bot host name is used within scripts that use rsync or scp/ssh.
+PROXIMITYBOT_HOST_NAME = 'rmxbotweb:8000'
 
 # PROXIMITYBOT_ENDPOINT = 'http://proximity-bot.net'
-PROXIMITYBOT_ENDPOINT = 'http://localhost:8000'
+PROXIMITYBOT_ENDPOINT = 'http://rmxbotweb:8000'
 
 PROXIMITY_USER = 'username'
 
@@ -34,7 +35,7 @@ CORPUS_COMPUTE_CALLBACK = '{}/'.format(_CORPUS_COMPUTE_CALLBACK)
 CORPUS_LEMMA_WORDS_PATH = 'lemma-words'
 
 # the place where nlp will store its temporary files; i.e. matrices, corpora.
-DATA_ROOT = os.path.join(PROXIMITY_BOT_PROJ, 'data', 'nlp')
+DATA_ROOT = '/data/nlpdata'
 # DATA_ROOT = os.path.abspath('/data')
 
 
@@ -53,4 +54,4 @@ RSYNC_POST_DATA = os.path.join(
 
 # nltk confiigs
 # NLTK_DATA_PATH = '/opt/nltk_data'
-NLTK_DATA_PATH = os.path.join(PROXIMITY_BOT_PROJ, 'data', 'nltk_data')
+NLTK_DATA_PATH = '/data/nltk_data'
