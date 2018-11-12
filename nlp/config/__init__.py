@@ -42,13 +42,17 @@ DATA_ROOT = '/data/nlpdata'
 # These are small shell scripts from rmxbin.
 RSYNC_SCRIPTS_PATH = os.path.abspath('/app/rmxbin')
 
-__LOCAL_REMOTE = 'remote' if PROXIMITYBOT_IS_REMOTE else 'local'
+RSYNC_GET_DATA = os.path.join(RSYNC_SCRIPTS_PATH, 'getdata.sh')
+RSYNC_GET_VECTORS = os.path.join(RSYNC_SCRIPTS_PATH, 'getvect.sh')
+RSYNC_POST_DATA = os.path.join(RSYNC_SCRIPTS_PATH, 'postdata.sh')
 
-RSYNC_GET_DATA = os.path.join(RSYNC_SCRIPTS_PATH, __LOCAL_REMOTE, 'getdata.sh')
-RSYNC_GET_VECTORS = os.path.join(
-    RSYNC_SCRIPTS_PATH, __LOCAL_REMOTE, 'getvect.sh')
-RSYNC_POST_DATA = os.path.join(
-    RSYNC_SCRIPTS_PATH, __LOCAL_REMOTE, 'postdata.sh')
+# __LOCAL_REMOTE = 'remote' if PROXIMITYBOT_IS_REMOTE else 'local'
+
+# RSYNC_GET_DATA = os.path.join(RSYNC_SCRIPTS_PATH, __LOCAL_REMOTE, 'getdata.sh')
+# RSYNC_GET_VECTORS = os.path.join(
+#     RSYNC_SCRIPTS_PATH, __LOCAL_REMOTE, 'getvect.sh')
+# RSYNC_POST_DATA = os.path.join(
+#     RSYNC_SCRIPTS_PATH, __LOCAL_REMOTE, 'postdata.sh')
 
 
 # nltk confiigs
