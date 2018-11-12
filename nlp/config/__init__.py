@@ -20,7 +20,7 @@ PROXIMITYBOT_HOST_NAME = 'rmxbotweb:8000'
 # PROXIMITYBOT_ENDPOINT = 'http://proximity-bot.net'
 PROXIMITYBOT_ENDPOINT = 'http://rmxbotweb:8000'
 
-PROXIMITY_USER = 'username'
+PROXIMITY_USER = 'rmxbotuser'
 
 CORPUS_ENDPOINT = '/'.join([PROXIMITYBOT_ENDPOINT, 'corpus'])
 
