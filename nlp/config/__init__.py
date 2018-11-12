@@ -40,7 +40,7 @@ DATA_ROOT = '/data/nlpdata'
 
 # RSYNC_SCRIPTS_PATH = os.path.abspath('/opt/rmxbin')
 # These are small shell scripts from rmxbin.
-RSYNC_SCRIPTS_PATH = os.path.abspath('/opt/rmxbin')
+RSYNC_SCRIPTS_PATH = os.path.abspath('/app/rmxbin')
 
 __LOCAL_REMOTE = 'remote' if PROXIMITYBOT_IS_REMOTE else 'local'
 
