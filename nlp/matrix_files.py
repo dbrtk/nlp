@@ -21,11 +21,11 @@ def sync_corpus_data(
     local_path = os.path.join(DATA_ROOT, unique_id)
     
     if get_vectors:
-        command = RSYNC_GET_VECTORS
+        command = 'sh {}'.format(RSYNC_GET_VECTORS)
     elif get:
-        command = RSYNC_GET_DATA
+        command = 'sh {}'.format(RSYNC_GET_DATA)
     else:
-        command = RSYNC_POST_DATA
+        command = 'sh {}'.format(RSYNC_POST_DATA)
 
     res = subprocess.run(
         shlex.split("%(command)s %(host)s %(user)s %(remote)s %(local)s" % {
