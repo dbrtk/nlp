@@ -17,9 +17,12 @@ def sync_corpus_data(
         get=True,
         get_vectors=False,
         **kwds):
+    """This function copies matrix files form the rmxbot server to the machine
+    that runs nlp; it uses rsync through ssh.
 
+    """
     local_path = os.path.join(DATA_ROOT, unique_id)
-    
+
     if get_vectors:
         command = RSYNC_GET_VECTORS
     elif get:
