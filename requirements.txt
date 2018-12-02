@@ -2,13 +2,15 @@
 numpy
 scipy
 Pillow
-theano
 
 nltk
 langdetect
 pycountry
 
 celery
+redis==2.10.6
 
 requests
 Django
+
+zlib

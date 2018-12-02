@@ -1,14 +1,14 @@
 
-
 import json
+import os
+import tempfile
 import uuid
 
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 
-from ... import task
+from ... import matrix_files, task
 from ...views import features_and_docs
-
 
 
 @csrf_exempt
@@ -16,8 +16,12 @@ def compute_matrices(request):
     """Computing matrices and generating features/weights for a given feature
        number.
     """
-    params = json.loads(request.body)
-    
+    params = json.loads(request.POST.get('params'))
+    unique_id = uuid.uuid4().hex
+    params['local_path'] = matrix_files.unpack_corpus(
+        request.FILES['file'].temporary_file_path(),
+        unique_id=unique_id)
+    params['unique_id'] = unique_id
     task.compute_matrices.apply_async(
         kwargs=params,
         link=task.compute_matrices_callback.s())

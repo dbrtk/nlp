@@ -26,7 +26,7 @@ def factorize_matrices(self,
                        docs_per_feat: int = 0,
                        feats_per_doc: int = 3,
                        dir_id: str = None):
-    
+
     local_path = os.path.join(DATA_ROOT, dir_id)
 
     out = {'corpusid': corpusid,
@@ -35,7 +35,7 @@ def factorize_matrices(self,
            'feats': feats,
            'error': False,
            'dir_id': dir_id}
-    
+
     sync_corpus_data(
         unique_id=dir_id,
         corpusid=corpusid,
@@ -69,7 +69,7 @@ def gen_matrices_callback(self, res):
     dir_id = res.get('dir_id')
 
     os.remove(os.path.join(local_path, 'matrix', 'vectors.npy'))
-    
+
     sync_corpus_data(
         unique_id=dir_id,
         corpusid=corpusid,
@@ -88,29 +88,21 @@ def gen_matrices_callback(self, res):
 @shared_task(bind=True, time_limit=900)
 def compute_matrices(self, **kwds):
 
-    unique_id = uuid.uuid4().hex
-    kwds['unique_id'] = unique_id
-
-    local_path = sync_corpus_data(
-        # corpusid=kwds.get('corpusid'),
-        unique_id=unique_id,
-        remote_path=kwds.get('path'))
-
-    kwds['local_path'] = local_path
+    unique_id = kwds['unique_id']
 
     features_and_docs(
-        path=local_path,
+        path=kwds['local_path'],
         feats=kwds.get('feats'),
         corpusid=kwds.get('corpusid'),
         words=kwds.get('words'),
         docs_per_feat=kwds.get('docs_per_feat'),
         feats_per_doc=kwds.get('feats_per_doc')
     )
-    sync_corpus_data(
-        unique_id=unique_id,
-        # corpusid=kwds.get('corpusid'),
-        remote_path=kwds.get('path'),
-        get=False)
+    # sync_corpus_data(
+    #     unique_id=unique_id,
+    #     # corpusid=kwds.get('corpusid'),
+    #     remote_path=kwds.get('path'),
+    #     get=False)
 
     return kwds
 

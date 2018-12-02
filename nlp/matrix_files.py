@@ -5,6 +5,7 @@
 
 import os
 import shlex
+import shutil
 import subprocess
 
 from .config import (DATA_ROOT, PROXIMITYBOT_HOST_NAME, PROXIMITY_USER,
@@ -24,20 +25,23 @@ def sync_corpus_data(
     local_path = os.path.join(DATA_ROOT, unique_id)
 
     if get_vectors:
-        command = RSYNC_GET_VECTORS
+        script_path = RSYNC_GET_VECTORS
     elif get:
-        command = RSYNC_GET_DATA
+        script_path = RSYNC_GET_DATA
     else:
-        command = RSYNC_POST_DATA
+        script_path = RSYNC_POST_DATA
 
     res = subprocess.run(
-        shlex.split("%(command)s %(host)s %(user)s %(remote)s %(local)s" % {
-            'command': command,
-            'host': PROXIMITYBOT_HOST_NAME,
-            'user': PROXIMITY_USER,
-            'remote': remote_path,
-            'local': local_path
-        }),
+        shlex.split(
+            "%(command)s %(path)s %(host)s %(user)s %(remote)s %(local)s" % {
+                'command': 'sh',
+                'path': script_path,
+                'host': PROXIMITYBOT_HOST_NAME,
+                'user': PROXIMITY_USER,
+                'remote': remote_path,
+                'local': local_path
+            }
+        ),
         check=True,
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE
@@ -45,3 +49,14 @@ def sync_corpus_data(
     if res.returncode == 0:
         return local_path
     raise RuntimeError(local_path)
+
+
+def unpack_corpus(tmp_upload_path: str = None, unique_id: str = None):
+
+    path = os.path.join(DATA_ROOT, unique_id)
+    shutil.unpack_archive(tmp_upload_path, path, 'zip')
+    return path
+
+
+def unpack_vectors(tmp_upload_path: str = None, unique_id: str = None):
+    pass
