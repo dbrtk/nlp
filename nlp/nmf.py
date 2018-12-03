@@ -1,5 +1,6 @@
 
 import numpy
+from sklearn.decomposition import NMF as NMF_sklearn
 
 from nlp.nnls import nnlsm_blockpivot
 from nlp.utils import normalize_column_pair
@@ -54,6 +55,26 @@ class NMF(object):
         _features = features.T
 
         return (weights, _features)
+
+
+class NMF_with_sklearn(object):
+
+    def __init__(self, main_matrix: numpy.matrix = None, init=None,
+                 feats_number: int = 10, max_iter: int = 50, max_time=None):
+
+        self.main_matrix = main_matrix
+        self.feats_number = feats_number
+        self.max_iter = max_iter
+        self.max_time = max_time
+        self.init = init
+
+    def factorize(self):
+
+        model = NMF_sklearn(n_components=self.feats_number,
+                            init='random', random_state=0)
+        W = model.fit_transform(self.main_matrix)
+        H = model.components_
+        return (W, H)
 
 
 class WetAss_NMF(object):
