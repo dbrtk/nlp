@@ -1,7 +1,6 @@
 
 import json
 import os
-import tempfile
 import uuid
 
 from django.http import JsonResponse
@@ -18,9 +17,12 @@ def compute_matrices(request):
     """
     params = json.loads(request.POST.get('params'))
     unique_id = uuid.uuid4().hex
-    params['local_path'] = matrix_files.unpack_corpus(
-        request.FILES['file'].temporary_file_path(),
-        unique_id=unique_id)
+    params['local_path'] = os.path.join(
+        matrix_files.unpack_corpus(
+            request.FILES['file'].temporary_file_path(),
+            unique_id=unique_id),
+        params.get('corpusid'))
+
     params['unique_id'] = unique_id
     task.compute_matrices.apply_async(
         kwargs=params,
@@ -32,10 +34,13 @@ def compute_matrices(request):
 def generate_features_weights(request):
 
     params = json.loads(request.POST.dict().get('payload'))
-    corpusid = params.get('corpus_id')
 
-    dir_id = uuid.uuid4().hex
-    params['dir_id'] = dir_id
+    unique_id = uuid.uuid4().hex
+    params['dir_id'] = unique_id
+
+    matrix_files.unpack_vectors(
+        request.FILES['file'].temporary_file_path(),
+        unique_id=unique_id)
 
     task.factorize_matrices.apply_async(
         kwargs=params,
@@ -47,7 +52,6 @@ def get_features_and_docs(request):
 
     params = json.loads(request.body)
     features, docs = features_and_docs(**params)
-
     return JsonResponse({
         'features': features,
         'docs': docs
