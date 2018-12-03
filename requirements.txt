@@ -1,6 +1,9 @@
 
 numpy
 scipy
+
+scikit-learn
+
 Pillow
 
 nltk
