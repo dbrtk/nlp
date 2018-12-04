@@ -32,5 +32,5 @@ CORPUS_LEMMA_WORDS_PATH = 'lemma-words'
 DATA_ROOT = '/data'
 
 # nltk confiigs
-NLTK_DATA_PATH = '/opt/nltk_data'
+NLTK_DATA_PATH = '/app/nltk_data'
 # NLTK_DATA_PATH = os.path.join(DATA_ROOT, 'nltk_data')
