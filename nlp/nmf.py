@@ -77,13 +77,6 @@ class NMF_with_sklearn(object):
         return (W, H)
 
 
-class WetAss_NMF(object):
-
-    def __init__(self):
-
-        pass
-
-
 class NMF_MU(object):
 
     def __init__(self, max_iter=500, max_time=numpy.inf, *args, **kwds):
