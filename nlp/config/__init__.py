@@ -14,7 +14,7 @@ STOPWORD_REPLACEMENT = "___"
 PROXIMITYBOT_IS_REMOTE = False
 
 # PROXIMITYBOT_ENDPOINT = 'http://proximity-bot.net'
-PROXIMITYBOT_ENDPOINT = 'http://rmxbotweb:8000'
+PROXIMITYBOT_ENDPOINT = os.environ.get('PROXIMITYBOT_ENDPOINT')
 
 CORPUS_ENDPOINT = '/'.join([PROXIMITYBOT_ENDPOINT, 'corpus'])
 
@@ -29,8 +29,7 @@ CORPUS_COMPUTE_CALLBACK = '{}/'.format(_CORPUS_COMPUTE_CALLBACK)
 CORPUS_LEMMA_WORDS_PATH = 'lemma-words'
 
 # the place where nlp will store its temporary files; i.e. matrices, corpora.
-DATA_ROOT = '/data'
+DATA_ROOT = os.environ.get('DATA_ROOT')
 
 # nltk confiigs
-NLTK_DATA_PATH = '/app/nltk_data'
-# NLTK_DATA_PATH = os.path.join(DATA_ROOT, 'nltk_data')
+NLTK_DATA_PATH = os.environ.get('NLTK_DATA_PATH')
