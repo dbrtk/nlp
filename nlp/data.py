@@ -334,7 +334,9 @@ class CorpusMatrix(object):
             self.make_file(*_, featcount=self.featcount)
 
     def __factorize(self, iterate=50, feature_number=25):
-
+        """Factorizing the matrix with non-negative matrix factorization
+           algorithms provided by scikit learn.
+        """
         vectors = self.vectors
         _nmf_algo = nmf.NMF_with_sklearn(
             main_matrix=vectors, feats_number=feature_number)
@@ -345,7 +347,6 @@ class CorpusMatrix(object):
     def __factorize__old(self, iterate=50, feature_number=25):
 
         # todo(): delete
-
         vectors = self.vectors
         weight, feat = simple_nmf.factorize(
             vectors, pc=feature_number, iter=iterate)
