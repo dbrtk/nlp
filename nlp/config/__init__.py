@@ -36,5 +36,4 @@ CORPUS_LEMMA_WORDS_PATH = 'lemma-words'
 DATA_ROOT = os.path.join(PROXIMITY_BOT_PROJ, 'data', 'nlp')
 
 # nltk confiigs
-# NLTK_DATA_PATH = '/opt/nltk_data'
-NLTK_DATA_PATH = os.path.join(DATA_ROOT, 'nltk_data')
+NLTK_DATA_PATH = os.path.join(PROXIMITY_BOT_PROJ, 'data', 'nltk_data')

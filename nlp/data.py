@@ -319,7 +319,7 @@ class CorpusMatrix(object):
         # todo(): delete?
         pass
 
-    def __factorize(self, iterate=50, feature_number=25):
+    def __factorize_blockpivot(self, iterate=50, feature_number=25):
         """Calling the factorization of the matrix in order to retrieve 2
            matrices; 1 containing features; the other one containing weights.
         """
@@ -333,7 +333,7 @@ class CorpusMatrix(object):
         for _ in zip((weight, feat), ['weights', 'feat']):
             self.make_file(*_, featcount=self.featcount)
 
-    def __factorize_sklearn(self, iterate=50, feature_number=25):
+    def __factorize(self, iterate=50, feature_number=25):
 
         vectors = self.vectors
         _nmf_algo = nmf.NMF_with_sklearn(
