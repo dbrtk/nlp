@@ -46,7 +46,7 @@ def get_words(corpus: str = None) -> (dict, list, list):
 
 
 def makematrix(allw: list = None, articlew: list = None):
-    """Converting the arrays to a matrix."""
+    """Converting allwords and article_words to a matrix."""
     wordvec = []
 
     # Only take words that are common but not too common

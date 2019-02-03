@@ -311,14 +311,6 @@ class CorpusMatrix(object):
         v = numpy.matrix(wordmatrix)
         self.make_file(v, 'vectors')
 
-    def feat_weights_nmb(self, featcount: int = 10):
-        pass
-
-    def factorize(self, featcount: int = 10):
-        """ Calling the factorization with n features. """
-        # todo(): delete?
-        pass
-
     def __factorize_blockpivot(self, iterate=50, feature_number=25):
         """Calling the factorization of the matrix in order to retrieve 2
            matrices; 1 containing features; the other one containing weights.

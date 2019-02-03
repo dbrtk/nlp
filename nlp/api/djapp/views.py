@@ -31,6 +31,13 @@ def compute_matrices(request):
 
 
 @csrf_exempt
+def matrix_update(request):
+    """Updating the matrices with new documents."""
+
+    pass
+
+
+@csrf_exempt
 def generate_features_weights(request):
 
     params = json.loads(request.POST.dict().get('payload'))

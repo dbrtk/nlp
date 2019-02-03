@@ -30,7 +30,7 @@ def get_wordnet_pos(treebank_tag):
 
 
 class TextFile(object):
-
+    """Procesisng the text file; lemmatizing."""
     def __init__(self, path: str = None, detect_lang: bool = False,
                  allwords: dict = None, lemma_word: dict = None):
 
@@ -62,8 +62,9 @@ class TextFile(object):
             lang = self.lang_name()
             self.info['language'] = lang
 
-        except langdetect.lang_detect_exception.LangDetectException as err:
-
+        # except langdetect.lang_detect_exception.LangDetectException as err:
+        except langdetect.detector_factory.LangDetectException as err:
+            del err
             # lang detect is not able to detect the language; the support may
             # be missing.
             pass
@@ -178,17 +179,22 @@ def separatewords(text):
 
 
 class CorpusDir(object):
+    """Processing a corpus."""
+    def __init__(self,
+                 corpus_path: str = None,
+                 allwords: dict = None,
+                 articlewords: list = None,
+                 articletitles: [] = None,
+                 lemma_words: list = None):
 
-    def __init__(self, corpus: str = None):
+        self.corpus_path = corpus_path
 
-        self.corpus_path = corpus
-
-        self.allwords = {}
-        self.articlewords = []
-        self.articletitles = []
+        self.allwords = allwords or {}
+        self.articlewords = articlewords or []
+        self.articletitles = articletitles or []
         self.info = []
 
-        self.lemma_word = {}
+        self.lemma_word = lemma_words or {}
 
     def __call__(self): self.iter_corpus()
 
@@ -223,8 +229,8 @@ def process_lemma_word(obj):
 
 
 def get_words(path, corpusid: str = None):
-
-    inst = CorpusDir(corpus=path)
+    """Generating the word count and lemma."""
+    inst = CorpusDir(corpus_path=path)
     inst()
 
     lemma_word = list(process_lemma_word(inst.lemma_word))
