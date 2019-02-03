@@ -25,11 +25,15 @@ def column_norm(X, by_norm='2'):
             norm_vec = numpy.sqrt(X.multiply(X).sum(axis=0))
         elif by_norm == '1':
             norm_vec = X.sum(axis=0)
+        else:
+            norm_vec = X.sum(axis=0)
         return numpy.asarray(norm_vec)[0]
     else:
         if by_norm == '2':
             norm_vec = numpy.sqrt(numpy.sum(X * X, axis=0))
         elif by_norm == '1':
+            norm_vec = numpy.sum(X, axis=0)
+        else:
             norm_vec = numpy.sum(X, axis=0)
         return norm_vec
 
