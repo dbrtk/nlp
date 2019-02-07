@@ -45,20 +45,35 @@ def get_words(corpus: str = None) -> (dict, list, list):
     return allwords, articlewords, articletitles
 
 
-def makematrix(allw: list = None, articlew: list = None):
+def makematrix(allw: list = None, articlew: list = None) -> (list, list):
     """Converting allwords and article_words to a matrix."""
-    wordvec = []
+    # wordvec = []
 
     # Only take words that are common but not too common
     # Because of text parsing on stopwords, this isn't needed.
-    for word, count in allw.items():
-        if count > 3 and count < len(articlew) * 0.6:
-            wordvec.append(word)
+    wordvec = [
+        word for word, count in allw.items()
+        if 3 < count < len(articlew) * 0.6
+    ]
+    # for word, count in allw.items():
+    #     # if count > 3 and count < len(articlew) * 0.6:
+    #     if 3 < count < len(articlew) * 0.6:
+    #         wordvec.append(word)
 
-    # Create the word matrix
-    wordmatrix = [[(word in f and f[word] or 0)
-                   for word in wordvec] for f in articlew]
-    return wordmatrix, wordvec
+    # Create and return the word matrix, along with the wordvec list.
+    return [[(word in f and f[word] or 0)
+             for word in wordvec] for f in articlew], wordvec
+
+
+def add_to_matrix():
+    """Adds rows (articles, documents) to a matrix."""
+
+    pass
+
+
+def remove_from_matrix():
+    """Removes rows from a matrix."""
+    pass
 
 
 def showfeatures(w, h, titles, wordvec, out='features.txt'):
