@@ -185,9 +185,14 @@ class CorpusDir(object):
                  allwords: dict = None,
                  articlewords: list = None,
                  articletitles: [] = None,
-                 lemma_words: list = None):
+                 lemma_words: list = None,
+                 added_texts: list = None,
+                 removed_texts: list = None):
 
         self.corpus_path = corpus_path
+
+        self.added_texts = added_texts
+        self.removed_texts = removed_texts
 
         self.allwords = allwords or {}
         self.articlewords = articlewords or []
@@ -200,7 +205,12 @@ class CorpusDir(object):
 
     def iter_corpus(self):
 
-        for file_name in os.listdir(self.corpus_path):
+        if self.added_texts:
+            files = self.added_texts
+        else:
+            files = os.listdir(self.corpus_path)
+
+        for file_name in files:
 
             inst = TextFile(
                 path=os.path.normpath(
@@ -220,6 +230,11 @@ class CorpusDir(object):
             self.articlewords.append(articlewords)
 
 
+class RemoveTexts(object):
+
+    pass
+
+
 def process_lemma_word(obj):
 
     for lemma, words in obj.items():
@@ -228,7 +243,7 @@ def process_lemma_word(obj):
         yield {'lemma': lemma, 'words': words}
 
 
-def get_words(path, corpusid: str = None):
+def get_words(path):
     """Generating the word count and lemma."""
     inst = CorpusDir(corpus_path=path)
     inst()
