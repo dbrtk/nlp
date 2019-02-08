@@ -19,8 +19,21 @@ MATRIX_FILES = [
     'wordmatrix', 'wordvec',
 
     'vectors',
-
 ]
+
+FILE_EXTENSIONS = {
+
+    'allwords': 'pickle',
+    'docwords': 'pickle',
+    'doctitles': 'pickle',
+    'lemma': 'json',
+
+    'wordmatrix': 'pickle',
+    'wordvec': 'pickle',
+
+    'vectors': 'npy'
+}
+
 WH_FILES = [
     'weights', 'feat',
 ]
@@ -68,14 +81,15 @@ class CorpusMatrix(object):
         return self.load_array('vectors')
 
     @property
-    def old_weights(self):
+    def lemma_to_dict(self):
 
-        return self.load_array('weights')
-
-    @property
-    def old_feat(self):
-
-        return self.load_array('feat')
+        path = '{}.json'.format(self.file_path('lemma'))
+        out = {}
+        with open(path, 'r') as _file:
+            for _line in _file.readlines():
+                _obj = json.loads(_line)
+                out[_obj.get('lemma')] = _obj.get('words')
+        return out
 
     @property
     def weights(self):
@@ -234,11 +248,20 @@ class CorpusMatrix(object):
         """ Making and saving to disk all the matrices necessary to . """
 
         self.__get_words()
+        self.compute_matrices()
+        # todo(): delete the line below
+        # self.__factorize()
+
+    def compute_matrices(self):
+        """Computing matrices after the corpus has been changed."""
         self.__makematrix()
         self.__make_vectors()
 
-        # todo(): delete the line below
-        # self.__factorize()
+    def remove_file(self, objname):
+        """Removing the file that matches an object name."""
+        path = '{}.{}'.format(self.file_path(objname),
+                              FILE_EXTENSIONS[objname])
+        return os.remove(path)
 
     def make_file(self, data: (numpy.ndarray, list), objname: str,
                   featcount: int = None, ext: str = None):
@@ -287,7 +310,7 @@ class CorpusMatrix(object):
             return pickle.load(open(path, 'rb'))
 
     def __get_words(self):
-        for _ in zip(get_words(self.path['corpus'], corpusid=self.corpusid),
+        for _ in zip(get_words(self.path['corpus']),
                      ['allwords', 'docwords', 'doctitles', 'lemma']):
 
             kwds = {}
