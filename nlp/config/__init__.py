@@ -22,6 +22,9 @@ PROXIMITYBOT_ENDPOINT = 'http://localhost:8000'
 
 CORPUS_ENDPOINT = '/'.join([PROXIMITYBOT_ENDPOINT, 'corpus'])
 
+INTEGRITY_CHECK_CALLBACK = '{}/{}/'.format(
+    CORPUS_ENDPOINT, 'integrity-check-callback')
+
 __CORPUS_NLP_CALLBACK = '/'.join(
     s.strip('/') for s in [CORPUS_ENDPOINT, 'nlp-callback'])
 CORPUS_NLP_CALLBACK = '{}/'.format(__CORPUS_NLP_CALLBACK)
