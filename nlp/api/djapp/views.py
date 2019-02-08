@@ -65,6 +65,27 @@ def get_features_and_docs(request):
     })
 
 
+@csrf_exempt
+def integrity_check(request):
+    """ The integrity check.
+    :param request:
+    :return:
+    """
+    params = json.loads(request.POST.get('payload'))
+    unique_id = uuid.uuid4().hex
+    tmp_path = os.path.join(
+        matrix_files.unpack_corpus(
+            request.FILES['file'].temporary_file_path(),
+            unique_id=unique_id)
+    )
+    params['path'] = os.path.join(tmp_path, params.get('corpusid'))
+    params['tmp_path'] = tmp_path
+
+    task.integrity_check.apply_async(
+        kwargs=params, link=task.integrity_check_callback.s())
+    return JsonResponse({'success': True})
+
+
 def features_to_json(request):
 
     pass

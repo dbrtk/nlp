@@ -93,10 +93,6 @@ class IntegrityCheck(object):
             raise ValueError(_)
         return _
 
-    def wordmatrix_shape(self):
-
-        pass
-
     def check_matrix(self):
 
         docids = self.get_docids(validate_id=True)
@@ -127,4 +123,3 @@ class IntegrityCheck(object):
             # removed texts - doc_file_id
             list(set(existing_docids).difference(set(docids))),
         )
-

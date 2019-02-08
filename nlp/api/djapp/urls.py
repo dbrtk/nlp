@@ -21,6 +21,7 @@ urlpatterns = [
     # path('remove-feature', views.remove_feature, name='remove_feature'),
     # path('dendogram', views.dendogram, name='dendogram'),
 
+    path('integrity-check', views.integrity_check, name='integrity_check'),
 
     path('test-celery', views.test_celery, name='testcelery'),
 ]
