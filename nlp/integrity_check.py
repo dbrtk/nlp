@@ -1,6 +1,7 @@
 
 import os
 import shutil
+from typing import List
 
 import bson
 
@@ -83,8 +84,32 @@ class IntegrityCheck(object):
 
         self.matrix_data.compute_matrices()
 
-    def remove_texts(self, docids):
-        pass
+    def remove_texts(self, del_ids: List[str] = None):
+        """Removing the texts from all matrices."""
+
+        allwords = self.matrix_data.allwords
+        docwords = self.matrix_data.docwords
+        docids = self.matrix_data.doctitles
+
+        indices = {_: docids.index(_) for _ in del_ids}
+        # cleaning up allwords
+        for docid, idx in indices.items():
+            for word, count in docwords[idx].items():
+                allwords[word] -= count
+                if allwords[word] < 0:
+                    raise ValueError(docid)
+
+        for _, idx in indices.items():
+            docids.pop(idx)
+            docwords.pop(idx)
+
+        for obj in [
+            {'objname': 'allwords', 'data': allwords},
+            {'objname': 'docwords', 'data': docwords},
+            {'objname': 'doctitles', 'data': docids},
+        ]:
+            self.matrix_data.remove_file(obj.get('objname'))
+            self.matrix_data.make_file(**obj)
 
     @property
     def corpus_path(self):
@@ -92,10 +117,6 @@ class IntegrityCheck(object):
         if not os.path.isdir(_):
             raise ValueError(_)
         return _
-
-    def check_matrix(self):
-
-        docids = self.get_docids(validate_id=True)
 
     def get_docids(self, validate_id: bool = False) -> tuple:
         """Retrieve document ids (DataObject) and file ids."""
