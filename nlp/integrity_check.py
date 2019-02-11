@@ -41,11 +41,6 @@ class IntegrityCheck(object):
         """
         added, removed = self.diff_docids()
 
-        print('added')
-        print(added)
-        print('removed')
-        print(removed)
-
         if added:
             self.add_texts(added)
 

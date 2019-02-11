@@ -6,8 +6,8 @@ import tempfile
 from celery import shared_task
 import requests
 
-from .config import (CORPUS_COMPUTE_CALLBACK, CORPUS_NLP_CALLBACK, DATA_ROOT,
-                     INTEGRITY_CHECK_CALLBACK)
+from .config import (CELERY_TIME_LIMIT, CORPUS_COMPUTE_CALLBACK,
+                     CORPUS_NLP_CALLBACK, DATA_ROOT, INTEGRITY_CHECK_CALLBACK)
 from .integrity_check import IntegrityCheck
 from .views import call_factorize, features_and_docs
 
@@ -82,7 +82,7 @@ def gen_matrices_callback(self, res):
     shutil.rmtree(tmp_dir)
 
 
-@shared_task(bind=True, time_limit=900)
+@shared_task(bind=True, time_limit=CELERY_TIME_LIMIT)
 def compute_matrices(self, **kwds):
     """Computing matrices"""
     features_and_docs(
@@ -115,7 +115,7 @@ def compute_matrices_callback(self, data):
     shutil.rmtree(data_dir)
 
 
-@shared_task(bind=True, time_limit=900)
+@shared_task(bind=True, time_limit=CELERY_TIME_LIMIT)
 def integrity_check(self, corpusid: str = None, path: str = None,
                     tmp_path: str = None):
 
