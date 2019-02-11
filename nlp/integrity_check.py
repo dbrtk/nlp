@@ -24,6 +24,8 @@ class IntegrityCheck(object):
 
         self.matrix_data = CorpusMatrix(corpusid=corpusid, path=path)
 
+        self.computed_feats = self.matrix_data.available_feats
+
     def __call__(self):
 
         added, removed = self.diff_docids()
@@ -41,7 +43,7 @@ class IntegrityCheck(object):
 
     def update_features(self):
         """Looping through all the features and updating these."""
-        for feats in self.matrix_data.available_feats:
+        for feats in self.computed_feats:
             shutil.rmtree(feats.get('path'))
             call_factorize(path=self.path,
                            corpusid=self.corpusid,
@@ -99,14 +101,19 @@ class IntegrityCheck(object):
                 if allwords[word] < 0:
                     raise ValueError(docid)
 
-        for _, idx in indices.items():
-            docids.pop(idx)
-            docwords.pop(idx)
-
+        indices = indices.values()
         for obj in [
             {'objname': 'allwords', 'data': allwords},
-            {'objname': 'docwords', 'data': docwords},
-            {'objname': 'doctitles', 'data': docids},
+            {
+                'objname': 'docwords',
+                'data': [item for idx, item in enumerate(docwords)
+                         if idx not in indices]
+            },
+            {
+                'objname': 'doctitles',
+                'data': [item for idx, item in enumerate(docids)
+                         if idx not in indices]
+            },
         ]:
             self.matrix_data.remove_file(obj.get('objname'))
             self.matrix_data.make_file(**obj)

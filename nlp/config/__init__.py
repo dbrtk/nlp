@@ -40,3 +40,5 @@ DATA_ROOT = os.path.join(PROXIMITY_BOT_PROJ, 'data', 'nlp')
 
 # nltk confiigs
 NLTK_DATA_PATH = os.path.join(PROXIMITY_BOT_PROJ, 'data', 'nltk_data')
+
+CELERY_TIME_LIMIT = 900

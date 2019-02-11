@@ -115,13 +115,12 @@ def compute_matrices_callback(self, data):
     shutil.rmtree(data_dir)
 
 
-@shared_task(bind=True)
+@shared_task(bind=True, time_limit=900)
 def integrity_check(self, corpusid: str = None, path: str = None,
                     tmp_path: str = None):
 
     check = IntegrityCheck(corpusid=corpusid, path=path)
     check()
-
     return {
         'corpusid': corpusid,
         'path': path,
