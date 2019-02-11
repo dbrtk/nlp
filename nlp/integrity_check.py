@@ -28,7 +28,23 @@ class IntegrityCheck(object):
 
     def __call__(self):
 
+        try:
+            self.update_matrices()
+        except Exception:
+            self.matrix_data.purge_matrix()
+
+        return True
+
+    def update_matrices(self):
+        """Computing the matrices, taking into account docuemnts that have
+        been added or removed.
+        """
         added, removed = self.diff_docids()
+
+        print('added')
+        print(added)
+        print('removed')
+        print(removed)
 
         if added:
             self.add_texts(added)
@@ -38,8 +54,6 @@ class IntegrityCheck(object):
 
         self.make_matrix()
         self.update_features()
-
-        return True
 
     def update_features(self):
         """Looping through all the features and updating these."""
@@ -102,17 +116,20 @@ class IntegrityCheck(object):
                     raise ValueError(docid)
 
         indices = indices.values()
+        docids = [item for idx, item in enumerate(docids)
+                  if idx not in indices]
+        docwords = [item for idx, item in enumerate(docwords)
+                    if idx not in indices]
+        self.id_word_check(docids, docwords)
         for obj in [
             {'objname': 'allwords', 'data': allwords},
             {
                 'objname': 'docwords',
-                'data': [item for idx, item in enumerate(docwords)
-                         if idx not in indices]
+                'data': docwords
             },
             {
                 'objname': 'doctitles',
-                'data': [item for idx, item in enumerate(docids)
-                         if idx not in indices]
+                'data': docids
             },
         ]:
             self.matrix_data.remove_file(obj.get('objname'))
@@ -140,14 +157,30 @@ class IntegrityCheck(object):
             out.append((_id, doc,))
         return tuple(out)
 
-    def diff_docids(self):
-
+    def diff_docids(self) -> tuple:
+        """Returns the ids that have been added and the ones that have been
+        removed from the corpus.
+        """
         docids = list(_[0] for _ in self.doc_file_id)
         existing_docids = self.matrix_data.doctitles
-
         return (
-            # added texts - doc_file_id
-            list(set(docids).difference(set(existing_docids))),
-            # removed texts - doc_file_id
-            list(set(existing_docids).difference(set(docids))),
+            # added doc ids
+            [_ for _ in docids if _ not in existing_docids],
+            # removed doc ids
+            [_ for _ in existing_docids if _ not in docids],
         )
+
+    def docid_words(self):
+        """Returns the mapping between docids and docwords."""
+        return dict(zip(
+            self.matrix_data.doctitles, self.matrix_data.docwords))
+
+    def id_word_check(self, docids, docwords):
+        """Check that documents that exist are in the right order."""
+        mapping = self.docid_words()
+
+        if len(docids) != len(docwords):
+            raise ValueError(docids)
+        for idx, docid in enumerate(docids):
+            if docid in mapping:
+                assert mapping[docid] == docwords[idx]
