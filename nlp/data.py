@@ -19,8 +19,21 @@ MATRIX_FILES = [
     'wordmatrix', 'wordvec',
 
     'vectors',
-
 ]
+
+FILE_EXTENSIONS = {
+
+    'allwords': 'pickle',
+    'docwords': 'pickle',
+    'doctitles': 'pickle',
+    'lemma': 'json',
+
+    'wordmatrix': 'pickle',
+    'wordvec': 'pickle',
+
+    'vectors': 'npy'
+}
+
 WH_FILES = [
     'weights', 'feat',
 ]
@@ -68,14 +81,15 @@ class CorpusMatrix(object):
         return self.load_array('vectors')
 
     @property
-    def old_weights(self):
+    def lemma_to_dict(self):
 
-        return self.load_array('weights')
-
-    @property
-    def old_feat(self):
-
-        return self.load_array('feat')
+        path = '{}.json'.format(self.file_path('lemma'))
+        out = {}
+        with open(path, 'r') as _file:
+            for _line in _file.readlines():
+                _obj = json.loads(_line)
+                out[_obj.get('lemma')] = _obj.get('words')
+        return out
 
     @property
     def weights(self):
@@ -234,11 +248,20 @@ class CorpusMatrix(object):
         """ Making and saving to disk all the matrices necessary to . """
 
         self.__get_words()
+        self.compute_matrices()
+        # todo(): delete the line below
+        # self.__factorize()
+
+    def compute_matrices(self):
+        """Computing matrices after the corpus has been changed."""
         self.__makematrix()
         self.__make_vectors()
 
-        # todo(): delete the line below
-        # self.__factorize()
+    def remove_file(self, objname):
+        """Removing the file that matches an object name."""
+        path = '{}.{}'.format(self.file_path(objname),
+                              FILE_EXTENSIONS[objname])
+        return os.remove(path)
 
     def make_file(self, data: (numpy.ndarray, list), objname: str,
                   featcount: int = None, ext: str = None):
@@ -287,7 +310,7 @@ class CorpusMatrix(object):
             return pickle.load(open(path, 'rb'))
 
     def __get_words(self):
-        for _ in zip(get_words(self.path['corpus'], corpusid=self.corpusid),
+        for _ in zip(get_words(self.path['corpus']),
                      ['allwords', 'docwords', 'doctitles', 'lemma']):
 
             kwds = {}
@@ -311,15 +334,7 @@ class CorpusMatrix(object):
         v = numpy.matrix(wordmatrix)
         self.make_file(v, 'vectors')
 
-    def feat_weights_nmb(self, featcount: int = 10):
-        pass
-
-    def factorize(self, featcount: int = 10):
-        """ Calling the factorization with n features. """
-        # todo(): delete?
-        pass
-
-    def __factorize(self, iterate=50, feature_number=25):
+    def __factorize_blockpivot(self, iterate=50, feature_number=25):
         """Calling the factorization of the matrix in order to retrieve 2
            matrices; 1 containing features; the other one containing weights.
         """
@@ -333,8 +348,10 @@ class CorpusMatrix(object):
         for _ in zip((weight, feat), ['weights', 'feat']):
             self.make_file(*_, featcount=self.featcount)
 
-    def __factorize_sklearn(self, iterate=50, feature_number=25):
-
+    def __factorize(self, iterate=50, feature_number=25):
+        """Factorizing the matrix with non-negative matrix factorization
+           algorithms provided by scikit learn.
+        """
         vectors = self.vectors
         _nmf_algo = nmf.NMF_with_sklearn(
             main_matrix=vectors, feats_number=feature_number)
@@ -345,7 +362,6 @@ class CorpusMatrix(object):
     def __factorize__old(self, iterate=50, feature_number=25):
 
         # todo(): delete
-
         vectors = self.vectors
         weight, feat = simple_nmf.factorize(
             vectors, pc=feature_number, iter=iterate)
@@ -374,6 +390,8 @@ class CorpusMatrix(object):
             matrix_name = self._matrix_name(item)
             if matrix_name in args:
                 os.remove(item)
+
+    def purge_matrix(self): return shutil.rmtree(self.path.get('matrix'))
 
     def remove_featdir(self):
         path = os.path.join(self.path.get('matrix'), 'wf', str(self.featcount))

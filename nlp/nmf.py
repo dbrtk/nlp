@@ -17,24 +17,14 @@ class NMF(object):
         self.max_time = max_time
         self.init = init
 
+    def iter_solver(self, A, W, H, k, it): raise NotImplemented()
+
     def factorize(self):
 
         if self.init is not None:
             weights = self.init[0].copy()
             features = self.init[1].copy()
         else:
-            # articles_count = numpy.shape(self.main_matrix)[0]
-            # words_count = numpy.shape(self.main_matrix)[1]
-
-            # weights = numpy.matrix(
-            #     [[numpy.random.random() for _ in range(self.feats_number)]
-            #      for j in range(articles_count)]
-            # )
-            # features = numpy.matrix(
-            #     [[numpy.random.random() for _ in range(words_count)]
-            #      for _ in range(self.feats_number)]
-            # )
-
             weights = numpy.random.rand(
                 self.main_matrix.shape[0], self.feats_number)
             features = numpy.random.rand(

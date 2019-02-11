@@ -6,8 +6,9 @@ import tempfile
 from celery import shared_task
 import requests
 
-from .config import CORPUS_COMPUTE_CALLBACK, CORPUS_NLP_CALLBACK, DATA_ROOT
-
+from .config import (CELERY_TIME_LIMIT, CORPUS_COMPUTE_CALLBACK,
+                     CORPUS_NLP_CALLBACK, DATA_ROOT, INTEGRITY_CHECK_CALLBACK)
+from .integrity_check import IntegrityCheck
 from .views import call_factorize, features_and_docs
 
 
@@ -81,7 +82,7 @@ def gen_matrices_callback(self, res):
     shutil.rmtree(tmp_dir)
 
 
-@shared_task(bind=True, time_limit=900)
+@shared_task(bind=True, time_limit=CELERY_TIME_LIMIT)
 def compute_matrices(self, **kwds):
     """Computing matrices"""
     features_and_docs(
@@ -112,3 +113,49 @@ def compute_matrices_callback(self, data):
     })
     shutil.rmtree(tmp_dir)
     shutil.rmtree(data_dir)
+
+
+@shared_task(bind=True, time_limit=CELERY_TIME_LIMIT)
+def integrity_check(self, corpusid: str = None, path: str = None,
+                    tmp_path: str = None):
+
+    check = IntegrityCheck(corpusid=corpusid, path=path)
+    check()
+    return {
+        'corpusid': corpusid,
+        'path': path,
+        'tmp_path': tmp_path,
+    }
+
+
+@shared_task(bind=True)
+def integrity_check_callback(self, kwds):
+    """Task called after the integrity check succeeds. This task sends matrices
+    to proximity-bot (the server) and deletes the temporary directory.
+    :param self:
+    :param kwds: dict containing the parameters
+    :return:
+    """
+    corpusid = kwds.get('corpusid')
+    path = kwds.get('path')
+    tmp_path = kwds.get('tmp_path')
+    resp = requests.post(
+        INTEGRITY_CHECK_CALLBACK,
+        files={
+            'file': open(
+                shutil.make_archive(
+                    os.path.join(tmp_path, 'matrix'),
+                    'zip',
+                    path,
+                    'matrix'
+                ),
+                'rb')
+        },
+        data={
+            'payload': json.dumps({
+                'corpusid': corpusid
+            })
+        }
+    )
+    if resp.ok and resp.json().get('success'):
+        shutil.rmtree(tmp_path)
