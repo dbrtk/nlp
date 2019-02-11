@@ -3,8 +3,6 @@ import os
 import shutil
 from typing import List
 
-import bson
-
 from .data import CorpusMatrix
 from .word_count import CorpusDir, process_lemma_word
 from .views import call_factorize
@@ -143,12 +141,6 @@ class IntegrityCheck(object):
         out = []
         for doc in os.listdir(self.corpus_path):
             _id = open(os.path.join(path, doc), 'r').readline().strip()
-            if validate_id:
-                try:
-                    bson.ObjectId(_id)
-                except (bson.errors.InvalidId, TypeError,):
-                    raise ValueError(_id)
-
             out.append((_id, doc,))
         return tuple(out)
 
