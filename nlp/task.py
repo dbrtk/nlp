@@ -3,24 +3,24 @@ import os
 import shutil
 import tempfile
 
-from celery import shared_task
 import requests
 
-from .config import (CELERY_TIME_LIMIT, CORPUS_COMPUTE_CALLBACK,
-                     CORPUS_NLP_CALLBACK, DATA_ROOT, INTEGRITY_CHECK_CALLBACK)
+from.app import celery
+from .config.appconf import (CELERY_TIME_LIMIT, CORPUS_COMPUTE_CALLBACK,
+                             CORPUS_NLP_CALLBACK, DATA_ROOT,
+                             INTEGRITY_CHECK_CALLBACK)
 from .integrity_check import IntegrityCheck
 from .views import call_factorize, features_and_docs
 
 
-@shared_task(bind=True)
-def test_task(self, a, b):
+@celery.task
+def test_task(a, b):
 
     return a + b
 
 
-@shared_task(bind=True)
-def factorize_matrices(self,
-                       corpusid: str = None,
+@celery.task
+def factorize_matrices(corpusid: str = None,
                        feats: int = 10,
                        words: int = 6,
                        docs_per_feat: int = 0,
@@ -49,8 +49,8 @@ def factorize_matrices(self,
     return out
 
 
-@shared_task(bind=True)
-def gen_matrices_callback(self, res):
+@celery.task
+def gen_matrices_callback(res):
     """Called after generating weight and feature matrices for a given feature
        number.
     """
@@ -82,7 +82,7 @@ def gen_matrices_callback(self, res):
     shutil.rmtree(tmp_dir)
 
 
-@shared_task(bind=True, time_limit=CELERY_TIME_LIMIT)
+@celery.task(bind=True, time_limit=CELERY_TIME_LIMIT)
 def compute_matrices(self, **kwds):
     """Computing matrices"""
     features_and_docs(
@@ -96,8 +96,8 @@ def compute_matrices(self, **kwds):
     return kwds
 
 
-@shared_task(bind=True)
-def compute_matrices_callback(self, data):
+@celery.task
+def compute_matrices_callback(data):
 
     tmp_dir = tempfile.mkdtemp()
     data_dir = os.path.join(DATA_ROOT, data.get('unique_id'))
@@ -115,7 +115,7 @@ def compute_matrices_callback(self, data):
     shutil.rmtree(data_dir)
 
 
-@shared_task(bind=True, time_limit=CELERY_TIME_LIMIT)
+@celery.task(bind=True, time_limit=CELERY_TIME_LIMIT)
 def integrity_check(self, corpusid: str = None, path: str = None,
                     tmp_path: str = None):
 
@@ -128,7 +128,7 @@ def integrity_check(self, corpusid: str = None, path: str = None,
     }
 
 
-@shared_task(bind=True)
+@celery.task
 def integrity_check_callback(self, kwds):
     """Task called after the integrity check succeeds. This task sends matrices
     to proximity-bot (the server) and deletes the temporary directory.

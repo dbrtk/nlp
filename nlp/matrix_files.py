@@ -6,7 +6,7 @@
 import os
 import shutil
 
-from .config import DATA_ROOT
+from .config.appconf import DATA_ROOT
 
 
 def unpack_corpus(tmp_upload_path: str = None, unique_id: str = None):

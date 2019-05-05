@@ -18,6 +18,9 @@ PROXIMITYBOT_ENDPOINT = os.environ.get('PROXIMITYBOT_ENDPOINT')
 
 CORPUS_ENDPOINT = '/'.join([PROXIMITYBOT_ENDPOINT, 'corpus'])
 
+INTEGRITY_CHECK_CALLBACK = '{}/{}/'.format(
+    CORPUS_ENDPOINT, 'integrity-check-callback')
+
 __CORPUS_NLP_CALLBACK = '/'.join(
     s.strip('/') for s in [CORPUS_ENDPOINT, 'nlp-callback'])
 CORPUS_NLP_CALLBACK = '{}/'.format(__CORPUS_NLP_CALLBACK)
@@ -32,4 +35,7 @@ CORPUS_LEMMA_WORDS_PATH = 'lemma-words'
 DATA_ROOT = os.environ.get('DATA_ROOT')
 
 # nltk confiigs
+
 NLTK_DATA_PATH = os.environ.get('NLTK_DATA_PATH')
+
+CELERY_TIME_LIMIT = 1800
