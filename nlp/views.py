@@ -24,6 +24,8 @@ def kmeans_clust(path, k: int = 10):
 def features_to_json(w, h, titles, wordvec, feature_words: int = 6,
                      docs_per_feature: int = 3):
     out = []
+    feature_words = int(feature_words)
+    docs_per_feature = int(docs_per_feature)
     pc, wc = numpy.shape(h)
     toppatterns = [[] for i in range(len(titles))]
     patternnames = []
@@ -73,6 +75,7 @@ def features_to_json(w, h, titles, wordvec, feature_words: int = 6,
 
 def docs_to_json(titles, toppatterns, patternnames, features_per_doc=3):
     output = []
+    features_per_doc = int(features_per_doc)
     # Loop over all the articles
     for j in range(len(titles)):
         doc = dict(dataid=titles[j])

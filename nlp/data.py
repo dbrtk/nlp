@@ -152,7 +152,7 @@ class CorpusMatrix(object):
             self.make_corpus_dir(path)
             # raise ValueError(path)
         self.corpusid = corpusid
-        self.featcount = featcount
+        self.featcount = int(featcount)
 
         matrix_path = os.path.normpath(os.path.join(path, 'matrix'))
         corpus_path = os.path.normpath(os.path.join(path, 'corpus'))
@@ -182,7 +182,8 @@ class CorpusMatrix(object):
         """
         if purge:
             self.delete_matrices('weights', 'feat')
-        self.__factorize(iterate=iterate, feature_number=feature_number)
+        self.__factorize(iterate=int(iterate),
+                         feature_number=int(feature_number))
 
     def get_feature_number(self):
         """ Returns the number of features that has been retrieved from the

@@ -33,6 +33,7 @@ CORPUS_LEMMA_WORDS_PATH = 'lemma-words'
 
 # the place where nlp will store its temporary files; i.e. matrices, corpora.
 DATA_ROOT = os.environ.get('DATA_ROOT')
+UPLOAD_FOLDER = os.environ.get('UPLOAD_FOLDER')
 
 # nltk confiigs
 

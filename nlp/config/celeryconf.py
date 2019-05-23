@@ -2,7 +2,7 @@
 BROKER_URL = 'redis://localhost:6379/0',
 CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
 
-CELERY_IMPORTS = ('nlp.tasks', )
+CELERY_IMPORTS = ('nlp.task', )
 
 CELERY_TASK_RESULT_EXPIRES = 30
 CELERY_TIMEZONE = 'UTC'
@@ -13,7 +13,7 @@ CELERY_RESULT_SERIALIZER = 'json'
 
 CELERY_ROUTES = {
 
-    'nlp.tasks.*': {'queue': 'scrasync'},
+    'nlp.task.*': {'queue': 'nlp'},
 
     'rmxbot.tasks.*': {'queue': 'rmxbot'},
 }

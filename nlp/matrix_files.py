@@ -13,17 +13,9 @@ def unpack_corpus(tmp_upload_path: str = None, unique_id: str = None):
 
     path = os.path.join(DATA_ROOT, unique_id)
     shutil.unpack_archive(tmp_upload_path, path, 'zip')
+    if os.path.exists(tmp_upload_path):
+        os.remove(tmp_upload_path)
 
-    # todo(): get rid of chmod!
-    # def chmod(path):
-    #     os.chmod(path, stat.S_IRWXU | stat.S_IRWXG | stat.S_IRWXO)
-
-    # chmod(path)
-    # for root, dirs, files in os.walk(path):
-    #     for f in files:
-    #         chmod(os.path.join(root, f))
-    #     for d in dirs:
-    #         chmod(os.path.join(root, d))
     return path
 
 
@@ -31,4 +23,6 @@ def unpack_vectors(tmp_upload_path: str = None, unique_id: str = None):
 
     path = os.path.join(DATA_ROOT, unique_id)
     shutil.unpack_archive(tmp_upload_path, path, 'zip')
+    if os.path.exists(tmp_upload_path):
+        os.remove(tmp_upload_path)
     return path

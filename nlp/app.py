@@ -6,7 +6,12 @@ from werkzeug.routing import BaseConverter
 
 from nlp.config import celeryconf
 
-os.environ['REDIS_HOST_NAME'] = 'localhost'
+UPLOAD_FOLDER = os.path.expanduser('~/Data/tmp')
+
+os.environ['PROXIMITYBOT_ENDPOINT'] = 'http://localhost:8000'
+os.environ['DATA_ROOT'] = os.path.expanduser('~/Data/nlp')
+os.environ['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+os.environ['NLTK_DATA_PATH'] = os.path.expanduser('~/Data/nltk_data')
 
 
 class ObjectidConverter(BaseConverter):
@@ -18,6 +23,7 @@ class ObjectidConverter(BaseConverter):
 def create_app():
     """Building up the flask applicaiton."""
     app = Flask(__name__)
+    app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
     app.url_map.converters['objectid'] = ObjectidConverter
 

@@ -37,7 +37,7 @@ def factorize_matrices(corpusid: str = None,
     try:
         call_factorize(
             path=os.path.join(local_path, corpusid),
-            feats=feats,
+            feats=int(feats),
             corpusid=corpusid,
             words=words,
             docs_per_feat=docs_per_feat,
