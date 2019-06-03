@@ -1,14 +1,11 @@
 import json
 import os
 import shutil
-import tempfile
 
 import requests
 
 from.app import celery
-from .config.appconf import (CELERY_TIME_LIMIT, CORPUS_COMPUTE_CALLBACK,
-                             CORPUS_NLP_CALLBACK, DATA_ROOT,
-                             INTEGRITY_CHECK_CALLBACK)
+from .config.appconf import CELERY_TIME_LIMIT, INTEGRITY_CHECK_CALLBACK
 from .config.celeryconf import RMXBOT_TASKS
 from .integrity_check import IntegrityCheck
 from .views import call_factorize, features_and_docs
@@ -52,41 +49,6 @@ def factorize_matrices(corpusid: str = None,
     return out
 
 
-@celery.task
-def gen_matrices_callback(res):
-    """Called after generating weight and feature matrices for a given feature
-       number.
-    """
-    # todo(): delete
-
-    corpusid = res.get('corpusid')
-    feats = res.get('feats')
-    error = res.get('error')
-    local_path = res.get('local_path')
-
-    tmp_dir = tempfile.mkdtemp()
-
-    archive_path = shutil.make_archive(
-        os.path.join(tmp_dir, str(feats)),
-        'zip',
-        os.path.join(local_path, corpusid, 'matrix', 'wf'),
-        str(feats)
-    )
-    shutil.rmtree(local_path)
-    requests.post(
-        CORPUS_NLP_CALLBACK,
-        data={
-            'payload': json.dumps({
-                'corpusid': corpusid,
-                'feats': feats,
-                'error': True if error else False
-            })
-        },
-        files={'file': open(archive_path, 'rb')}
-    )
-    shutil.rmtree(tmp_dir)
-
-
 @celery.task(bind=True, time_limit=CELERY_TIME_LIMIT)
 def compute_matrices(self, **kwds):
     """Computing matrices"""
@@ -103,25 +65,6 @@ def compute_matrices(self, **kwds):
         'feats': kwds.get('feats')
     })
     return kwds
-
-
-@celery.task
-def compute_matrices_callback(data):
-
-    tmp_dir = tempfile.mkdtemp()
-    data_dir = os.path.join(DATA_ROOT, data.get('unique_id'))
-    requests.post(CORPUS_COMPUTE_CALLBACK, data={
-        'corpusid': data.get('corpusid'),
-        'feats': data.get('feats')
-    }, files={
-        'file': open(shutil.make_archive(
-            os.path.join(tmp_dir, 'matrix'),
-            'zip',
-            os.path.join(data_dir, data.get('corpusid'), 'matrix')
-        ), 'rb')
-    })
-    shutil.rmtree(tmp_dir)
-    shutil.rmtree(data_dir)
 
 
 @celery.task(bind=True, time_limit=CELERY_TIME_LIMIT)

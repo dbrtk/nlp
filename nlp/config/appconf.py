@@ -21,14 +21,6 @@ CORPUS_ENDPOINT = '/'.join([PROXIMITYBOT_ENDPOINT, 'corpus'])
 INTEGRITY_CHECK_CALLBACK = '{}/{}/'.format(
     CORPUS_ENDPOINT, 'integrity-check-callback')
 
-__CORPUS_NLP_CALLBACK = '/'.join(
-    s.strip('/') for s in [CORPUS_ENDPOINT, 'nlp-callback'])
-CORPUS_NLP_CALLBACK = '{}/'.format(__CORPUS_NLP_CALLBACK)
-
-_CORPUS_COMPUTE_CALLBACK = '/'.join(
-    s.strip('/') for s in [CORPUS_ENDPOINT, 'sync-matrices'])
-CORPUS_COMPUTE_CALLBACK = '{}/'.format(_CORPUS_COMPUTE_CALLBACK)
-
 CORPUS_LEMMA_WORDS_PATH = 'lemma-words'
 
 # the place where nlp will store its temporary files; i.e. matrices, corpora.
