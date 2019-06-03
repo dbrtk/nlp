@@ -12,55 +12,10 @@ from .views import features_and_docs
 nlp_app = Blueprint('nlp_app', __name__, root_path='/')
 
 
-@nlp_app.route('/compute-matrices/', methods=['POST'])
-def compute_matrices():
-    """Computing matrices and generating features/weights for a given feature
-       number.
-    """
-    unique_id = uuid.uuid4().hex
-
-    file = request.files['file']
-    file_path = os.path.join(UPLOAD_FOLDER, unique_id)
-    file.save(file_path)
-
-    params = dict(request.form)
-    params['local_path'] = os.path.join(
-        matrix_files.unpack_corpus(
-            file_path,
-            unique_id=unique_id),
-        params.get('corpusid'))
-
-    params['unique_id'] = unique_id
-    task.compute_matrices.apply_async(
-        kwargs=params,
-        link=task.compute_matrices_callback.s())
-    return jsonify({'success': True})
-
-
 def matrix_update():
     """Updating the matrices with new documents."""
 
     pass
-
-
-@nlp_app.route('/generate-features-weights/', methods=['POST'])
-def generate_features_weights():
-
-    unique_id = uuid.uuid4().hex
-
-    file = request.files['file']
-    file_path = os.path.join(UPLOAD_FOLDER, unique_id)
-    file.save(file_path)
-
-    params = dict(request.form)
-    params['dir_id'] = unique_id
-
-    matrix_files.unpack_vectors(file_path, unique_id=unique_id)
-
-    task.factorize_matrices.apply_async(
-        kwargs=params,
-        link=task.gen_matrices_callback.s())
-    return jsonify({'success': True})
 
 
 @nlp_app.route('/features-docs/')

@@ -19,8 +19,11 @@ CELERY_ROUTES = {
 }
 
 RMXBOT_TASKS = {
+
     # 'corpus_compute': '',x
-    # 'nlp_callback': 'rmxbot.tasks.corpus.nlp_callback_success',
+
+    'nlp_callback': 'rmxbot.tasks.corpus.nlp_callback_success',
+
     # 'integrity_check': '',
 
 }

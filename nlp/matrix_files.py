@@ -8,9 +8,11 @@ import shutil
 
 from .config.appconf import DATA_ROOT
 
+# todo(): delete the module
+
 
 def unpack_corpus(tmp_upload_path: str = None, unique_id: str = None):
-
+    # todo(): delete
     path = os.path.join(DATA_ROOT, unique_id)
     shutil.unpack_archive(tmp_upload_path, path, 'zip')
     if os.path.exists(tmp_upload_path):
@@ -20,7 +22,7 @@ def unpack_corpus(tmp_upload_path: str = None, unique_id: str = None):
 
 
 def unpack_vectors(tmp_upload_path: str = None, unique_id: str = None):
-
+    # todo(): delete
     path = os.path.join(DATA_ROOT, unique_id)
     shutil.unpack_archive(tmp_upload_path, path, 'zip')
     if os.path.exists(tmp_upload_path):

@@ -9,6 +9,7 @@ from.app import celery
 from .config.appconf import (CELERY_TIME_LIMIT, CORPUS_COMPUTE_CALLBACK,
                              CORPUS_NLP_CALLBACK, DATA_ROOT,
                              INTEGRITY_CHECK_CALLBACK)
+from .config.celeryconf import RMXBOT_TASKS
 from .integrity_check import IntegrityCheck
 from .views import call_factorize, features_and_docs
 
@@ -25,19 +26,16 @@ def factorize_matrices(corpusid: str = None,
                        words: int = 6,
                        docs_per_feat: int = 0,
                        feats_per_doc: int = 3,
-                       dir_id: str = None):
-
-    local_path = os.path.join(DATA_ROOT, dir_id)
-    out = {'corpusid': corpusid,
-           'path': os.path.join(local_path, corpusid),
-           'local_path': local_path,
-           'feats': feats,
-           'error': False,
-           'dir_id': dir_id}
+                       path: str = None):
+    out = {
+        'corpusid': corpusid,
+        'feats': feats,
+        'error': False
+    }
     try:
         call_factorize(
-            path=os.path.join(local_path, corpusid),
-            feats=int(feats),
+            path=path,
+            feats=feats,
             corpusid=corpusid,
             words=words,
             docs_per_feat=docs_per_feat,
@@ -46,6 +44,11 @@ def factorize_matrices(corpusid: str = None,
     except (IndexError, Exception,) as err:
         out['error'] = True
         return out
+
+    celery.send_task(RMXBOT_TASKS['nlp_callback'], kwargs={
+        'corpusid': corpusid,
+        'feats': feats
+    })
     return out
 
 
@@ -54,6 +57,8 @@ def gen_matrices_callback(res):
     """Called after generating weight and feature matrices for a given feature
        number.
     """
+    # todo(): delete
+
     corpusid = res.get('corpusid')
     feats = res.get('feats')
     error = res.get('error')
@@ -86,13 +91,17 @@ def gen_matrices_callback(res):
 def compute_matrices(self, **kwds):
     """Computing matrices"""
     features_and_docs(
-        path=kwds['local_path'],
+        path=kwds['path'],
         feats=kwds.get('feats'),
         corpusid=kwds.get('corpusid'),
         words=kwds.get('words'),
         docs_per_feat=kwds.get('docs_per_feat'),
         feats_per_doc=kwds.get('feats_per_doc')
     )
+    celery.send_task(RMXBOT_TASKS['nlp_callback'], kwargs={
+        'corpusid': kwds.get('corpusid'),
+        'feats': kwds.get('feats')
+    })
     return kwds
 
 
