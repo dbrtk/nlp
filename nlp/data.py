@@ -150,9 +150,8 @@ class CorpusMatrix(object):
         path = os.path.abspath(path)
         if not os.path.isdir(path):
             self.make_corpus_dir(path)
-            # raise ValueError(path)
         self.corpusid = corpusid
-        self.featcount = int(featcount)
+        self.featcount = featcount
 
         matrix_path = os.path.normpath(os.path.join(path, 'matrix'))
         corpus_path = os.path.normpath(os.path.join(path, 'corpus'))

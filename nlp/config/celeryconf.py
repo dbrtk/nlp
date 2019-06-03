@@ -24,6 +24,8 @@ RMXBOT_TASKS = {
 
     'nlp_callback': 'rmxbot.tasks.corpus.nlp_callback_success',
 
+    'integrity_check_callback': 'rmxbot.tasks.corpus.integrity_check_callback',
+
     # 'integrity_check': '',
 
 }
