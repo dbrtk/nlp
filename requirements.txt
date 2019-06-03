@@ -13,8 +13,4 @@ pycountry
 celery
 redis
 
-requests
-flask
-Django
-
 pytest
