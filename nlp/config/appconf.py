@@ -11,7 +11,8 @@ STOPWORD_REPLACEMENT = "___"
 
 # the place where nlp will store its temporary files; i.e. matrices, corpora.
 DATA_ROOT = os.environ.get('DATA_ROOT')
-UPLOAD_FOLDER = os.environ.get('UPLOAD_FOLDER')
+
+REDIS_HOST_NAME = os.environ.get('REDIS_HOST_NAME')
 
 # nltk confiigs
 NLTK_DATA_PATH = os.environ.get('NLTK_DATA_PATH')

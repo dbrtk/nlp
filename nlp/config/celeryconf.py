@@ -1,6 +1,7 @@
+from .appconf import REDIS_HOST_NAME
 
-BROKER_URL = 'redis://localhost:6379/0',
-CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
+BROKER_URL = 'redis://{}:6379/0'.format(REDIS_HOST_NAME)
+CELERY_RESULT_BACKEND = 'redis://{}:6379/0'.format(REDIS_HOST_NAME)
 
 CELERY_IMPORTS = ('nlp.task', )
 
