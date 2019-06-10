@@ -2,7 +2,8 @@
 
 import numpy
 
-from . import config, clusters, features, nmf
+from . import clusters, features
+from .config import appconf
 from .data import CorpusMatrix
 
 
@@ -23,6 +24,8 @@ def kmeans_clust(path, k: int = 10):
 def features_to_json(w, h, titles, wordvec, feature_words: int = 6,
                      docs_per_feature: int = 3):
     out = []
+    feature_words = int(feature_words)
+    docs_per_feature = int(docs_per_feature)
     pc, wc = numpy.shape(h)
     toppatterns = [[] for i in range(len(titles))]
     patternnames = []
@@ -72,6 +75,7 @@ def features_to_json(w, h, titles, wordvec, feature_words: int = 6,
 
 def docs_to_json(titles, toppatterns, patternnames, features_per_doc=3):
     output = []
+    features_per_doc = int(features_per_doc)
     # Loop over all the articles
     for j in range(len(titles)):
         doc = dict(dataid=titles[j])
@@ -104,7 +108,7 @@ def features_and_docs(path: str = None,
         next(_.get('featcount') for _ in available_feats
              if feats == int(_.get('featcount')))
     except StopIteration:
-        data.call_factorize(feature_number=feats, iterate=config.MAX_ITERATE)
+        data.call_factorize(feature_number=feats, iterate=appconf.MAX_ITERATE)
 
     json_obj, topp, pn = features_to_json(
         data.weights, data.feat, data.doctitles, data.wordvec,
@@ -124,7 +128,7 @@ def call_factorize(path: str = None,
                    feats_per_doc: int = 3):
     """ This function is called to factorize matrices, given a features number. """
     data = CorpusMatrix(path=path, featcount=feats, corpusid=corpusid)
-    data.call_factorize(feature_number=feats, iterate=config.MAX_ITERATE)
+    data.call_factorize(feature_number=feats, iterate=appconf.MAX_ITERATE)
     return True
 
 

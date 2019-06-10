@@ -10,11 +10,7 @@ nltk
 langdetect
 pycountry
 
-
 celery
 redis
-
-requests
-Django
 
 pytest

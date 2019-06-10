@@ -9,7 +9,7 @@ from nltk.stem.snowball import SnowballStemmer
 from nltk.stem import WordNetLemmatizer
 import pycountry
 
-from .config import NLTK_DATA_PATH, STOPWORD_REPLACEMENT
+from .config.appconf import NLTK_DATA_PATH, STOPWORD_REPLACEMENT
 
 nltk.data.path.append(NLTK_DATA_PATH)
 del nltk
