@@ -59,7 +59,7 @@ class IntegrityCheck(object):
     def data_file_ids(self, docids):
         """Returns a list of file ids that map to the doc ids in doc_file_id.
         """
-        return [_ for _ in self.doc_file_id if _[0] in docids]
+        return [_ for _ in self.doc_file_id if _ in docids]
 
     def add_texts(self, docids):
         """Adding new texts (documents) to the corpus."""
@@ -137,24 +137,24 @@ class IntegrityCheck(object):
 
     def get_docids(self, validate_id: bool = False) -> tuple:
         """Retrieve document ids (DataObject) and file ids."""
-        path = self.corpus_path
-        out = []
-        for doc in os.listdir(self.corpus_path):
-            _id = open(os.path.join(path, doc), 'r').readline().strip()
-            out.append((_id, doc,))
-        return tuple(out)
+        # path = self.corpus_path
+        # out = []
+        # for doc in os.listdir(self.corpus_path):
+        #     _id = open(os.path.join(path, doc), 'r').readline().strip()
+        #     out.append((_id, doc,))
+        return tuple(os.listdir(self.corpus_path))
 
     def diff_docids(self) -> tuple:
         """Returns the ids that have been added and the ones that have been
         removed from the corpus.
         """
-        docids = list(_[0] for _ in self.doc_file_id)
+        file_ids = list(_ for _ in self.doc_file_id)
         existing_docids = self.matrix_data.doctitles
         return (
             # added doc ids
-            [_ for _ in docids if _ not in existing_docids],
+            [_ for _ in file_ids if _ not in existing_docids],
             # removed doc ids
-            [_ for _ in existing_docids if _ not in docids],
+            [_ for _ in existing_docids if _ not in file_ids],
         )
 
     def docid_words(self):

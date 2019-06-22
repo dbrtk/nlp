@@ -55,8 +55,8 @@ class TextFile(object):
 
         with open(self.path, 'r') as _file:
             self.txt = _file.read()
+            docid = os.path.basename(_file.name)
 
-        docid = self.txt.split('\n')[0]
         try:
             self.language = langdetect.detect(self.txt)
             lang = self.lang_name()

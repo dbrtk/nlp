@@ -26,10 +26,14 @@ def get_words(corpus: str = None) -> (dict, list, list):
 
     for item in os.listdir(corpus or CORPUSPATH):
         path = os.path.normpath(os.path.join(CORPUSPATH, item))
-        txt = ''
-        with open(path, 'r') as _file:
-            txt = _file.read()
-        docid = txt.split('\n')[0]
+
+        _file = open(path, 'r')
+
+        txt = _file.read()
+        docid = os.path.basename(_file.name)
+
+        _file.close()
+
         words = separatewords(txt)
 
         articlewords.append({})
