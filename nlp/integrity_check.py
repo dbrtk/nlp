@@ -4,6 +4,7 @@ import shutil
 from typing import List
 
 from .data import CorpusMatrix
+from .errors import MatrixFileDoesNotExist
 from .word_count import CorpusDir, process_lemma_word
 from .views import call_factorize
 
@@ -28,7 +29,13 @@ class IntegrityCheck(object):
 
         try:
             self.update_matrices()
-        except Exception:
+        except MatrixFileDoesNotExist as _:
+            # the matrices have not been computed; ValueError is raised when
+            # retrieving doctitles.
+            return True
+        except Exception as err:
+            # deleting all matrices when an unknown error happens
+            # todo(): review this
             self.matrix_data.purge_matrix()
 
         return True
@@ -65,7 +72,7 @@ class IntegrityCheck(object):
         """Adding new texts (documents) to the corpus."""
         inst = CorpusDir(
 
-            added_texts=[_[1] for _ in self.data_file_ids(docids)],
+            added_texts=[_ for _ in self.data_file_ids(docids)],
             corpus_path=self.corpus_path,
 
             allwords=self.matrix_data.allwords,

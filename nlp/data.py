@@ -10,6 +10,7 @@ import stat
 import numpy
 
 from . import features, nmf, simple_nmf
+from .errors import MatrixFileDoesNotExist
 from .word_count import get_words
 
 MATRIX_FILES = [
@@ -193,7 +194,7 @@ class CorpusMatrix(object):
     def file_path(self, filename, featcount: int = None):
 
         if filename not in MATRIX_FILES + WH_FILES:  # + KMEANS_FILES:
-            raise ValueError(filename)
+            raise MatrixFileDoesNotExist(filename)
         if filename in WH_FILES:
             if not featcount:
                 raise RuntimeError(filename)
@@ -303,7 +304,7 @@ class CorpusMatrix(object):
         path = '{}.{}'.format(_, extension)
 
         if not os.path.exists(path):
-            raise ValueError(path)
+            raise MatrixFileDoesNotExist(path)
         if with_numpy:
             return numpy.load(pathlib.Path(path))
         else:
