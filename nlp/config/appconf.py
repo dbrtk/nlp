@@ -9,9 +9,6 @@ DEFAULT_LANGUAGE = 'english'
 
 STOPWORD_REPLACEMENT = "___"
 
-# the place where nlp will store its temporary files; i.e. matrices, corpora.
-DATA_ROOT = os.environ.get('DATA_ROOT')
-
 REDIS_HOST_NAME = os.environ.get('REDIS_HOST_NAME')
 
 # nltk confiigs
