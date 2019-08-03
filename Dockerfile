@@ -1,13 +1,6 @@
 # this should be ran using python:3.7
 FROM python:3.7
 
-RUN groupadd -r nlpuser && useradd -r -g nlpuser nlpuser
-
-# RUN mkdir -p /data
-# RUN chown -R nlpuser:nlpuser /data
-
-# VOLUME /data
-
 # Copy the current directory contents into the container at /app
 COPY . /app
 
@@ -17,13 +10,12 @@ WORKDIR /app
 # Install any needed packages specified in requirements.txt
 RUN pip install -U pip && pip install -e .
 
+# creating a directory that will contain nltk_data
+RUN mkdir /data
+
 # Download resources for nltk
-RUN python -m nltk.downloader -d /app/nltk_data stopwords wordnet averaged_perceptron_tagger punkt
+RUN python -m nltk.downloader -d /data/nltk_data stopwords wordnet averaged_perceptron_tagger punkt
 
-RUN chown -R nlpuser:nlpuser /app
-
-ENV NLTK_DATA_PATH '/app/nltk_data'
+ENV NLTK_DATA_PATH '/data/nltk_data'
 
 ENV REDIS_HOST_NAME 'redis'
-
-USER nlpuser
