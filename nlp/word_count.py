@@ -9,7 +9,7 @@ from nltk.stem.snowball import SnowballStemmer
 from nltk.stem import WordNetLemmatizer
 import pycountry
 
-from .config.appconf import NLTK_DATA_PATH, STOPWORD_REPLACEMENT
+from .config.appconf import NLTK_DATA_PATH
 
 nltk.data.path.append(NLTK_DATA_PATH)
 del nltk
@@ -111,13 +111,13 @@ class TextFile(object):
     def process_word(self, word):
 
         if len(word) < 3:
-            return STOPWORD_REPLACEMENT
+            return None
 
         if word in self.stopwords:
-            return STOPWORD_REPLACEMENT
+            return None
 
         if not re.match(r'^\w*$', word):
-            return STOPWORD_REPLACEMENT
+            return None
 
         return word.lower()
 
@@ -131,7 +131,7 @@ class TextFile(object):
 
             # todo(): implement a better way of handling stopwords
             # todo(): review the line below
-            if word == STOPWORD_REPLACEMENT:
+            if not word:
                 continue
 
             pos = get_wordnet_pos(_)
