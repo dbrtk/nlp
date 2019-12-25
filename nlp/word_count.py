@@ -128,9 +128,6 @@ class TextFile(object):
         for word, _ in pos_tag(word_tokenize(self.txt)):
 
             word = self.process_word(word)
-
-            # todo(): implement a better way of handling stopwords
-            # todo(): review the line below
             if not word:
                 continue
 
