@@ -128,7 +128,7 @@ class TextFile(object):
         for word, _ in pos_tag(word_tokenize(self.txt)):
 
             word = self.process_word(word)
-            if not word:
+            if word is None or not word:
                 continue
 
             pos = get_wordnet_pos(_)
