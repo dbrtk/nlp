@@ -111,13 +111,13 @@ class TextFile(object):
     def process_word(self, word):
 
         if len(word) < 3:
-            return None
+            return
 
         if word in self.stopwords:
-            return None
+            return
 
         if not re.match(r'^\w*$', word):
-            return None
+            return
 
         return word.lower()
 
@@ -128,7 +128,7 @@ class TextFile(object):
         for word, _ in pos_tag(word_tokenize(self.txt)):
 
             word = self.process_word(word)
-            if word is None or not word:
+            if not word:
                 continue
 
             pos = get_wordnet_pos(_)
@@ -157,6 +157,8 @@ class TextFile(object):
         for word in words:
 
             word = self.process_word(word)
+            if not word:
+                continue
 
             if self.stem:
                 word = self.stem.stem(word)
@@ -201,7 +203,7 @@ class CorpusDir(object):
     def __call__(self): self.iter_corpus()
 
     def iter_corpus(self):
-
+        """iterating files"""
         if self.added_texts:
             files = self.added_texts
         else:
@@ -225,11 +227,6 @@ class CorpusDir(object):
 
             self.allwords = inst.allwords
             self.articlewords.append(articlewords)
-
-
-class RemoveTexts(object):
-
-    pass
 
 
 def process_lemma_word(obj):
