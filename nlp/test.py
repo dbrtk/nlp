@@ -14,7 +14,7 @@ PRINTER = pprint.PrettyPrinter(indent=4)
 
 def get_features_old():
 
-    _ = '/path/to/corpus'
+    _ = '/path/to/container'
     features.set_corpus(_)
 
     allwords, articlewords, articletitles = features.get_words()
@@ -31,7 +31,7 @@ def get_features_old():
 
 def get_features_with_data(featcount: int = 5):
 
-    _ = '/path/to/corpus/'
+    _ = '/path/to/container/'
 
     shutil.rmtree(os.path.join(_, 'matrix'))
 
@@ -63,7 +63,7 @@ def get_features_with_data(featcount: int = 5):
 
 
 def get_feats_view():
-    path = '/path/to/corpus/'
+    path = '/path/to/container/'
     try:
         shutil.rmtree(os.path.join(path, 'matrix'))
     except FileNotFoundError:
@@ -73,7 +73,7 @@ def get_feats_view():
 
 
 def kmeans_clust():
-    _ = '/path/to/corpus/'
+    _ = '/path/to/container/'
     kclust = views.kmeans_clust(_)
     print(kclust)
     for i in kclust:
@@ -82,7 +82,7 @@ def kmeans_clust():
 
 
 def purge():
-    data = CorpusMatrix(path='/path/to/corpus/')
+    data = CorpusMatrix(path='/path/to/container/')
     # data.purge_matrixdir()
     data.delete_matrices('weights', 'feat')
 

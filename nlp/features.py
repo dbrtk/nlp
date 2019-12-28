@@ -8,7 +8,7 @@ from . import clusters
 from . import simple_nmf as nmf
 
 
-CORPUSPATH = '/path/to/corpus'
+CORPUSPATH = '/path/to/container'
 
 
 def separatewords(text):
@@ -140,7 +140,7 @@ def showarticles(titles, toppatterns, patternnames, out='articles.txt'):
 
 
 def circular_tree(path_to_data):
-    set_corpus('/path/to/corpus')
+    set_corpus('/path/to/container')
 
     allwords, articlewords, articletitles = get_words()
 
@@ -170,7 +170,7 @@ def set_corpus(path):
 
 
 def main():
-    _ = '/path/to/corpus/'
+    _ = '/path/to/container/'
 
     set_corpus(_)
     allwords, articlewords, articletitles = get_words()
