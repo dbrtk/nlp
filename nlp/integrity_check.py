@@ -3,6 +3,7 @@ import os
 import shutil
 from typing import List
 
+from .config.appconf import TEXT_FOLDER
 from .data import CorpusMatrix
 from .errors import MatrixFileDoesNotExist
 from .word_count import CorpusDir, process_lemma_word
@@ -137,7 +138,7 @@ class IntegrityCheck(object):
 
     @property
     def corpus_path(self):
-        _ = os.path.join(self.path, 'corpus')
+        _ = os.path.join(self.path, TEXT_FOLDER)
         if not os.path.isdir(_):
             raise ValueError(_)
         return _

@@ -10,6 +10,7 @@ import stat
 import numpy
 
 from . import features, nmf, simple_nmf
+from .config.appconf import MATRIX_FOLDER, TEXT_FOLDER
 from .errors import MatrixFileDoesNotExist
 from .word_count import get_words
 
@@ -154,17 +155,17 @@ class CorpusMatrix(object):
         self.corpusid = corpusid
         self.featcount = featcount
 
-        matrix_path = os.path.normpath(os.path.join(path, 'matrix'))
-        corpus_path = os.path.normpath(os.path.join(path, 'corpus'))
+        matrix_path = os.path.normpath(os.path.join(path, MATRIX_FOLDER))
+        text_path = os.path.normpath(os.path.join(path, TEXT_FOLDER))
 
-        self.path = dict(path=path, matrix=matrix_path, corpus=corpus_path)
+        self.path = dict(path=path, matrix=matrix_path, text=text_path)
 
-        if not os.path.isdir(corpus_path):
+        if not os.path.isdir(text_path):
             self.mkdir_corpus()
             # raise RuntimeError(corpus_path)
 
         # setting up the path to the corpus on the level of features module.
-        features.set_corpus(self.path['corpus'])
+        features.set_corpus(self.path['text'])
 
         if not os.path.isdir(matrix_path):
             self.mkdir_mtrx()
@@ -235,7 +236,7 @@ class CorpusMatrix(object):
 
     def mkdir_corpus(self):
         """ Making the directory for corpus files. """
-        path = self.path['corpus']
+        path = self.path['text']
         os.makedirs(path)
         self.chmod_fd(path)
 
@@ -311,7 +312,7 @@ class CorpusMatrix(object):
             return pickle.load(open(path, 'rb'))
 
     def __get_words(self):
-        for _ in zip(get_words(self.path['corpus']),
+        for _ in zip(get_words(self.path['text']),
                      ['allwords', 'docwords', 'doctitles', 'lemma']):
 
             kwds = {}

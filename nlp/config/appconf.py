@@ -15,3 +15,5 @@ NLTK_DATA_PATH = os.environ.get('NLTK_DATA_PATH')
 # celery configs
 CELERY_TIME_LIMIT = 1800
 
+TEXT_FOLDER = 'text'
+MATRIX_FOLDER = 'matrix'
