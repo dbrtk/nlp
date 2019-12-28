@@ -1,5 +1,5 @@
 # this should be ran using python:3.7
-FROM python:3.7
+FROM python:3.8
 
 # Copy the current directory contents into the container at /app
 COPY . /app
