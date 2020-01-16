@@ -355,7 +355,7 @@ class CorpusMatrix(object):
         for _ in zip((weight, feat), ['weights', 'feat']):
             self.make_file(*_, featcount=self.featcount)
 
-    def __factorize_neo(self) -> None:
+    def __factorize(self) -> None:
 
         if not isinstance(self.featcount, int):
             raise ValueError(self.featcount)
@@ -380,7 +380,7 @@ class CorpusMatrix(object):
             featcount=self.featcount)
         shutil.rmtree(path)
 
-    def __factorize(self, iterate=50, feature_number=25):
+    def __factorize_locally(self, iterate=50, feature_number=25):
         """Factorizing the matrix with non-negative matrix factorization
            algorithms provided by scikit learn.
         """
