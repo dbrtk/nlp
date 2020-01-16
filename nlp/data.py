@@ -1,16 +1,21 @@
 
 import glob
+import io
 import json
 import os
 import pathlib
 import pickle
 import shutil
 import stat
+import uuid
+import zipfile
 
 import numpy
+import requests
 
 from . import features, nmf, simple_nmf
-from .config.appconf import MATRIX_FOLDER, TEXT_FOLDER
+from .config.appconf import (MATRIX_FOLDER, NMF_ENDPOINT, TEXT_FOLDER,
+                             UPLOAD_FOLDER)
 from .errors import MatrixFileDoesNotExist
 from .word_count import get_words
 
@@ -350,13 +355,38 @@ class CorpusMatrix(object):
         for _ in zip((weight, feat), ['weights', 'feat']):
             self.make_file(*_, featcount=self.featcount)
 
+    def __factorize_neo(self) -> None:
+
+        if not isinstance(self.featcount, int):
+            raise ValueError(self.featcount)
+        resp = requests.post(
+            f'{NMF_ENDPOINT}/features/{self.featcount}',
+            files={'file': open(self.file_path('vectors'), 'rb')}
+        )
+        path = os.path.join(UPLOAD_FOLDER, uuid.uuid4().hex)
+        os.mkdir(path)
+        zf = zipfile.ZipFile(
+            io.BytesIO(resp.content), "a", zipfile.ZIP_DEFLATED, False)
+        zf.extractall(path)
+        del zf
+        del resp
+        self.make_file(
+            numpy.load(os.path.join(path, 'feat.npy')),
+            'feat',
+            featcount=self.featcount)
+        self.make_file(
+            numpy.load(os.path.join(path, 'weights.npy')),
+            'weights',
+            featcount=self.featcount)
+        shutil.rmtree(path)
+
     def __factorize(self, iterate=50, feature_number=25):
         """Factorizing the matrix with non-negative matrix factorization
            algorithms provided by scikit learn.
         """
-        vectors = self.vectors
+        # todo(): remove this method
         _nmf_algo = nmf.NMF_with_sklearn(
-            main_matrix=vectors, feats_number=feature_number)
+            main_matrix=self.vectors, feats_number=feature_number)
         W, H = _nmf_algo.factorize()
         for _ in zip((W, H), ['weights', 'feat']):
             self.make_file(*_, featcount=self.featcount)

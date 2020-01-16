@@ -20,7 +20,7 @@ setup(
     description='Natural language processing.',
     long_description='',
 
-    url='http://dbrtk.net',
+    url='https://gitlab.com/dbrtk',
 
     author='Dominik Bartkowski',
     author_email='dominik.bartkowski@gmail.com',
@@ -33,8 +33,6 @@ setup(
         'Framework :: Flask',
         'Framework :: IDLE',
         'Framework :: IPython',
-        'Framework :: Django',
-        'Framework :: Django :: 1.10',
 
         'Intended Audience :: Developers',
         'Intended Audience :: Education',
@@ -51,6 +49,7 @@ setup(
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3 :: Only',
 
         'Operating System :: POSIX :: Linux',
