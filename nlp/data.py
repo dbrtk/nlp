@@ -7,15 +7,13 @@ import pathlib
 import pickle
 import shutil
 import stat
-import uuid
 import zipfile
 
 import numpy
 import requests
 
 from . import features, nmf, simple_nmf
-from .config.appconf import (MATRIX_FOLDER, NMF_ENDPOINT, TEXT_FOLDER,
-                             UPLOAD_FOLDER)
+from .config.appconf import MATRIX_FOLDER, NMF_ENDPOINT, TEXT_FOLDER
 from .errors import MatrixFileDoesNotExist
 from .word_count import get_words
 
@@ -38,7 +36,10 @@ FILE_EXTENSIONS = {
     'wordmatrix': 'pickle',
     'wordvec': 'pickle',
 
-    'vectors': 'npy'
+    'vectors': 'npy',
+
+    'weights': 'npy',
+    'feat': 'npy'
 }
 
 WH_FILES = [
@@ -120,11 +121,10 @@ class CorpusMatrix(object):
 
         out = []
         for _ in dirs:
-            self.featcount = _
-
-            if not int(_) == len(self.feat):
-                continue  # raise RuntimeError(self)
-
+            self.featcount = int(_)
+            # todo(): delete the snippet below
+            # if not int(_) == numpy.shape(self.feat)[1]:
+            #     raise RuntimeError(numpy.shape(self.feat))
             _path = os.path.join(path, _)
             out.append(dict(
                 featcount=_,
@@ -183,19 +183,30 @@ class CorpusMatrix(object):
         if not self.file_integrity_check():
             self.make_matrices()
 
-    def call_factorize(self, iterate=50, feature_number=20, purge=False):
+    def call_factorize(self, purge=False):
         """ Removes the weights and features and calls the matrix generator.
         """
         if purge:
             self.delete_matrices('weights', 'feat')
-        self.__factorize(iterate=int(iterate),
-                         feature_number=int(feature_number))
+        self.__factorize()
 
     def get_feature_number(self):
         """ Returns the number of features that has been retrieved from the
             corpus.
         """
         return len(self.feat)
+
+    def feat_weights_path(self, create: bool = False):
+
+        path = os.path.normpath(
+            os.path.join(
+                self.path['matrix'], 'wf', str(self.featcount)
+            )
+        )
+        if create:
+            if not os.path.exists(path):
+                os.makedirs(path)
+        return path
 
     def file_path(self, filename, featcount: int = None):
 
@@ -355,38 +366,69 @@ class CorpusMatrix(object):
         for _ in zip((weight, feat), ['weights', 'feat']):
             self.make_file(*_, featcount=self.featcount)
 
-    def __factorize(self) -> None:
+    def check_wf_folder_structure(self) -> bool:
+        """
+        Verifying the structure of the folder that holds features and weights.
+        :return: bool
+        """
+        expected_files = {
+            f'{_}.{FILE_EXTENSIONS[_]}' for _ in WH_FILES
+        }
+        path = self.feat_weights_path()
+        files = os.listdir(path)
+        if not set(files) == expected_files:
+            shutil.rmtree(path)
+            return False
+        for item in files:
+            try:
+                numpy.load(os.path.join(path, item))
+            except (IOError, ValueError):
+                shutil.rmtree(path)
+                return False
+        return True
 
+    def chmod_wf(self):
+        """
+        This is a function that will chmod the created "wf" folder.
+        :return:
+        """
+        path = self.feat_weights_path()
+        self.chmod_fd(path)
+        for _ in os.listdir(path):
+            self.chmod_fd(os.path.join(path, _))
+
+    def __factorize(self) -> None:
+        """
+        Factorize the matrix using rmxnmf - which is an external service.
+        :return:
+        """
         if not isinstance(self.featcount, int):
             raise ValueError(self.featcount)
+        ftype = 'vectors'
         resp = requests.post(
             f'{NMF_ENDPOINT}/features/{self.featcount}',
-            files={'file': open(self.file_path('vectors'), 'rb')}
+            files={'file': open(
+                f'{self.file_path(ftype)}.{FILE_EXTENSIONS[ftype]}',
+                'rb'
+            )}
         )
-        path = os.path.join(UPLOAD_FOLDER, uuid.uuid4().hex)
-        os.mkdir(path)
         zf = zipfile.ZipFile(
             io.BytesIO(resp.content), "a", zipfile.ZIP_DEFLATED, False)
-        zf.extractall(path)
+        zf.extractall(self.feat_weights_path(create=True))
         del zf
         del resp
-        self.make_file(
-            numpy.load(os.path.join(path, 'feat.npy')),
-            'feat',
-            featcount=self.featcount)
-        self.make_file(
-            numpy.load(os.path.join(path, 'weights.npy')),
-            'weights',
-            featcount=self.featcount)
-        shutil.rmtree(path)
+        self.chmod_wf()
+        self.check_wf_folder_structure()
 
-    def __factorize_locally(self, iterate=50, feature_number=25):
+    def __factorize_local(self, iterate=50, feature_number=25):
         """Factorizing the matrix with non-negative matrix factorization
            algorithms provided by scikit learn.
         """
         # todo(): remove this method
+        if not isinstance(self.featcount, int):
+            raise ValueError(self.featcount)
         _nmf_algo = nmf.NMF_with_sklearn(
-            main_matrix=self.vectors, feats_number=feature_number)
+            main_matrix=self.vectors, feats_number=self.featcount)
         W, H = _nmf_algo.factorize()
         for _ in zip((W, H), ['weights', 'feat']):
             self.make_file(*_, featcount=self.featcount)

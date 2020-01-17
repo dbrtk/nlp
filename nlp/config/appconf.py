@@ -20,5 +20,4 @@ MATRIX_FOLDER = 'matrix'
 
 # settings for the endpoint that implements non-negative matrix factorization
 NMF_ENDPOINT = os.environ.get('NMF_ENDPOINT')
-UPLOAD_FOLDER = os.environ.get('UPLOAD_FOLDER')
 

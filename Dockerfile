@@ -10,7 +10,7 @@ WORKDIR /app
 RUN pip install -U pip && pip install -e .
 
 # creating a directory that will contain nltk_data
-RUN mkdir -p /data/upload
+RUN mkdir /data
 
 # Download resources for nltk
 RUN python -m nltk.downloader -d /data/nltk_data stopwords wordnet averaged_perceptron_tagger punkt
@@ -20,7 +20,6 @@ ENV NLTK_DATA_PATH '/data/nltk_data'
 ENV REDIS_HOST_NAME 'redis'
 
 # Endpoint of the service that does NMF
-ENV NMF_ENDPOINT 'http://rmxnmf:8006'
+ENV NMF_ENDPOINT 'http://rmxnmf:8007'
 
-ENV UPLOAD_FOLDER '/data/upload'
 

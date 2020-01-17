@@ -1,4 +1,6 @@
 
+import sys
+
 from.app import celery
 from .config.appconf import CELERY_TIME_LIMIT
 from .config.celeryconf import RMXBOT_TASKS
@@ -34,7 +36,7 @@ def factorize_matrices(corpusid: str = None,
             docs_per_feat=docs_per_feat,
             feats_per_doc=feats_per_doc
         )
-    except (IndexError, Exception,) as err:
+    except (IndexError, Exception,):
         out['error'] = True
         return out
 

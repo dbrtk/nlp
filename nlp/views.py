@@ -20,21 +20,35 @@ def kmeans_clust(path, k: int = 10):
         clusters.kcluster(wordmatrix, k=k), articletitles)
 
 
-def features_to_json(w, h, titles, wordvec, feature_words: int = 6,
+def features_to_json(weights, features, titles, wordvec, feature_words: int = 6,
                      docs_per_feature: int = 3):
+    """
+    :param weights: weights - numpy.ndarray
+    :param features: features - numpy.ndarray
+    :param titles:
+    :param wordvec:
+    :param feature_words:
+    :param docs_per_feature:
+    :return:
+    """
     out = []
+
+    # from celery.contrib import rdb
+    # rdb.set_trace()
+
     feature_words = int(feature_words)
     docs_per_feature = int(docs_per_feature)
-    pc, wc = numpy.shape(h)
+    pc, wc = numpy.shape(features)
     toppatterns = [[] for i in range(len(titles))]
     patternnames = []
     # Loop over all the features
     for i in range(pc):
         f_obj = {}
-        slist = []
+
         # Create a list of words and their weights
+        slist = []
         for j in range(wc):
-            slist.append((h[i, j], wordvec[j]))
+            slist.append((features[i, j], wordvec[j]))
         # Reverse sort the word list
         slist.sort()
         slist.reverse()
@@ -52,8 +66,8 @@ def features_to_json(w, h, titles, wordvec, feature_words: int = 6,
 
         for j in range(len(titles)):
             # Add the article with its weight
-            flist.append((w[j, i], titles[j]))
-            toppatterns[j].append((w[j, i], i, titles[j]))
+            flist.append((weights[j, i], titles[j]))
+            toppatterns[j].append((weights[j, i], i, titles[j]))
 
         # Reverse sort the list
         flist.sort()
@@ -67,7 +81,6 @@ def features_to_json(w, h, titles, wordvec, feature_words: int = 6,
         #     outfile.write(str(f) + '\n')
         # outfile.write('\n')
         out.append(f_obj)
-    # outfile.close()
     # Return the pattern names for later use
     return out, toppatterns, patternnames
 
@@ -107,7 +120,7 @@ def features_and_docs(path: str = None,
         next(_.get('featcount') for _ in available_feats
              if feats == int(_.get('featcount')))
     except StopIteration:
-        data.call_factorize(feature_number=feats, iterate=appconf.MAX_ITERATE)
+        data.call_factorize()
 
     json_obj, topp, pn = features_to_json(
         data.weights, data.feat, data.doctitles, data.wordvec,
@@ -127,7 +140,7 @@ def call_factorize(path: str = None,
                    feats_per_doc: int = 3):
     """ This function is called to factorize matrices, given a features number. """
     data = CorpusMatrix(path=path, featcount=feats, corpusid=corpusid)
-    data.call_factorize(feature_number=feats, iterate=appconf.MAX_ITERATE)
+    data.call_factorize()
     return True
 
 

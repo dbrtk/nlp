@@ -61,10 +61,11 @@ class NMF_with_sklearn(object):
     def factorize(self):
 
         model = NMF_sklearn(n_components=self.feats_number,
-                            init='random', random_state=0)
+                            init='random',
+                            random_state=0)
         W = model.fit_transform(self.main_matrix)
         H = model.components_
-        return (W, H)
+        return W, H
 
 
 class NMF_MU(object):
