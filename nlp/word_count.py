@@ -31,8 +31,8 @@ def get_wordnet_pos(treebank_tag):
 
 class TextFile(object):
     """Procesisng the text file; lemmatizing."""
-    def __init__(self, path: str = None, detect_lang: bool = False,
-                 allwords: dict = None, lemma_word: dict = None):
+    def __init__(self, path: str = None, allwords: dict = None,
+                 lemma_word: dict = None):
 
         self.path = path
         self.txt = None
@@ -215,7 +215,6 @@ class CorpusDir(object):
                 path=os.path.normpath(
                     os.path.join(self.corpus_path, file_name)),
                 allwords=self.allwords,
-                detect_lang=True,
                 lemma_word=self.lemma_word
             )
             docid, articlewords, info = inst()

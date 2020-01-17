@@ -1,23 +1,7 @@
 
 import numpy
 
-from . import clusters, features
-from .config import appconf
 from .data import CorpusMatrix
-
-
-def kmeans_clust(path, k: int = 10):
-    """ Given a corpus and the number of groups (k), returns a kmeans cluster.
-    """
-
-    # data = CorpusMatrix(path=path)
-    # data()
-    features.set_corpus(path)
-    allwords, articlewords, articletitles = features.get_words()
-    wordmatrix, wordvec = features.makematrix(allwords, articlewords)
-
-    return clusters.get_clusters(
-        clusters.kcluster(wordmatrix, k=k), articletitles)
 
 
 def features_to_json(weights, features, titles, wordvec, feature_words: int = 6,
@@ -142,9 +126,3 @@ def call_factorize(path: str = None,
     data = CorpusMatrix(path=path, featcount=feats, corpusid=corpusid)
     data.call_factorize()
     return True
-
-
-def remove_feature(**kwds):
-
-    data = CorpusMatrix(**kwds)
-    data.remove_featdir()

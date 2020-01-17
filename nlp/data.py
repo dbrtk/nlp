@@ -12,7 +12,7 @@ import zipfile
 import numpy
 import requests
 
-from . import features, nmf, simple_nmf
+from . import features
 from .config.appconf import MATRIX_FOLDER, NMF_ENDPOINT, TEXT_FOLDER
 from .errors import MatrixFileDoesNotExist
 from .word_count import get_words
@@ -48,11 +48,6 @@ WH_FILES = [
 KMEANS_FILES = [
 
     'bestmatches'
-]
-TEMP_MATRICES = [
-
-    'toppatterns', 'patternnames'
-
 ]
 
 
@@ -135,21 +130,6 @@ class CorpusMatrix(object):
         self.featcount = old_fcount
         return out
 
-    @property
-    def available_kmeans(self):
-        path = os.path.join(self.path.get('matrix'), 'kmeans')
-        if not os.path.isdir(path):
-            return []
-        dirs = os.listdir(path)
-        out = []
-        for _ in dirs:
-            _path = os.path.join(path, _)
-            out.append(dict(
-                k=_,
-                path=_path
-            ))
-        return out
-
     def __init__(self, path: str = None, featcount: int = None,
                  corpusid: str = None):
         """
@@ -189,12 +169,6 @@ class CorpusMatrix(object):
         if purge:
             self.delete_matrices('weights', 'feat')
         self.__factorize()
-
-    def get_feature_number(self):
-        """ Returns the number of features that has been retrieved from the
-            corpus.
-        """
-        return len(self.feat)
 
     def feat_weights_path(self, create: bool = False):
 
@@ -267,8 +241,6 @@ class CorpusMatrix(object):
 
         self.__get_words()
         self.compute_matrices()
-        # todo(): delete the line below
-        # self.__factorize()
 
     def compute_matrices(self):
         """Computing matrices after the corpus has been changed."""
@@ -324,8 +296,7 @@ class CorpusMatrix(object):
             raise MatrixFileDoesNotExist(path)
         if with_numpy:
             return numpy.load(pathlib.Path(path))
-        else:
-            return pickle.load(open(path, 'rb'))
+        return pickle.load(open(path, 'rb'))
 
     def __get_words(self):
         for _ in zip(get_words(self.path['text']),
@@ -351,20 +322,6 @@ class CorpusMatrix(object):
         wordmatrix = self.wordmatrix
         v = numpy.matrix(wordmatrix)
         self.make_file(v, 'vectors')
-
-    def __factorize_blockpivot(self, iterate=50, feature_number=25):
-        """Calling the factorization of the matrix in order to retrieve 2
-           matrices; 1 containing features; the other one containing weights.
-        """
-        vectors = self.vectors
-        inst = nmf.NMF_ANLS_BLOCKPIVOT(
-            max_iter=iterate,
-            main_matrix=vectors,
-            feats_number=feature_number)
-
-        weight, feat = inst.factorize()
-        for _ in zip((weight, feat), ['weights', 'feat']):
-            self.make_file(*_, featcount=self.featcount)
 
     def check_wf_folder_structure(self) -> bool:
         """
@@ -420,28 +377,6 @@ class CorpusMatrix(object):
         self.chmod_wf()
         self.check_wf_folder_structure()
 
-    def __factorize_local(self, iterate=50, feature_number=25):
-        """Factorizing the matrix with non-negative matrix factorization
-           algorithms provided by scikit learn.
-        """
-        # todo(): remove this method
-        if not isinstance(self.featcount, int):
-            raise ValueError(self.featcount)
-        _nmf_algo = nmf.NMF_with_sklearn(
-            main_matrix=self.vectors, feats_number=self.featcount)
-        W, H = _nmf_algo.factorize()
-        for _ in zip((W, H), ['weights', 'feat']):
-            self.make_file(*_, featcount=self.featcount)
-
-    def __factorize__old(self, iterate=50, feature_number=25):
-
-        # todo(): delete
-        vectors = self.vectors
-        weight, feat = simple_nmf.factorize(
-            vectors, pc=feature_number, iter=iterate)
-        for _ in zip((weight, feat), ['weights', 'feat']):
-            self.make_file(*_, featcount=self.featcount)
-
     def _matrix_files(self):
         return glob.glob(os.path.normpath(
             os.path.join(self.path.get('matrix'), '*')))
@@ -449,12 +384,6 @@ class CorpusMatrix(object):
     def _matrix_name(self, path):
         """ Given a path, returns the name of the matrix. """
         return path.split('/')[-1].split('.')[0]
-
-    def purge_matrixdir(self):
-        # shutil.rmtree(self.path['matrix'])
-        files = self._matrix_files()
-        for item in files:
-            pass
 
     def delete_matrices(self, *args):
         """
@@ -466,13 +395,3 @@ class CorpusMatrix(object):
                 os.remove(item)
 
     def purge_matrix(self): return shutil.rmtree(self.path.get('matrix'))
-
-    def remove_featdir(self):
-        path = os.path.join(self.path.get('matrix'), 'wf', str(self.featcount))
-        if os.path.isdir(path):
-            shutil.rmtree(path)
-
-    def getnerate_basic_matrices(self):
-        vectors = self.vectors
-        self.file_integrity_check()
-        return vectors

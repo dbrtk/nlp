@@ -1,7 +1,5 @@
 
-import sys
-
-from.app import celery
+from .app import celery
 from .config.appconf import CELERY_TIME_LIMIT
 from .config.celeryconf import RMXBOT_TASKS
 from .data import CorpusMatrix

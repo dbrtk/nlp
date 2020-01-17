@@ -1,12 +1,6 @@
 
 import os
 
-
-MAX_ITERATE = 100
-
-# language processing (detection)
-DEFAULT_LANGUAGE = 'english'
-
 REDIS_HOST_NAME = os.environ.get('REDIS_HOST_NAME')
 
 # nltk confiigs
