@@ -107,13 +107,13 @@ def docs_to_json(titles, toppatterns, patternnames, features_per_doc=3):
 
 def features_and_docs(path: str = None,
                       feats: int = 25,
-                      corpusid: str = None,
+                      containerid: str = None,
                       words: int = 6,
                       docs_per_feat: int = 3,
-                      feats_per_doc: int = 3):
+                      feats_per_doc: int = 3) -> (None, tuple):
     """ Returning features and docs. This method will compute all the matrices. """
 
-    data = DataFolder(path=path, featcount=feats, corpusid=corpusid)
+    data = DataFolder(path=path, featcount=feats, corpusid=containerid)
     data()
     available_feats = data.available_feats
     try:
@@ -121,6 +121,7 @@ def features_and_docs(path: str = None,
              if feats == int(_.get('featcount')))
     except StopIteration:
         data.call_factorize()
+        return
 
     json_obj, topp, pn = features_to_json(
         data.weights, data.feat, data.doctitles, data.wordvec,

@@ -119,10 +119,10 @@ class DataFolder(object):
         out = []
         for _ in dirs:
             self.featcount = int(_)
-            # todo(): delete the snippet below
-            # if not int(_) == numpy.shape(self.feat)[1]:
-            #     raise RuntimeError(numpy.shape(self.feat))
             _path = os.path.join(path, _)
+            wf_content = os.listdir(_path)
+            if not all(_ in wf_content for _ in ['feat.npy', 'weights.npy']):
+                continue
             out.append(dict(
                 featcount=_,
                 path=_path,

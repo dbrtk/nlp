@@ -51,7 +51,7 @@ def compute_matrices(self, **kwds):
     features_and_docs(
         path=kwds['path'],
         feats=kwds.get('feats'),
-        corpusid=kwds.get('corpusid'),
+        containerid=kwds.get('corpusid'),
         words=kwds.get('words'),
         docs_per_feat=kwds.get('docs_per_feat'),
         feats_per_doc=kwds.get('feats_per_doc')
@@ -98,10 +98,9 @@ def get_features_and_docs(path: str = None,
     :param feats_per_doc: features per document
     :return:
     """
-
     return features_and_docs(path=path,
                              feats=feats,
-                             corpusid=corpusid,
+                             containerid=corpusid,
                              words=words,
                              docs_per_feat=docs_per_feat,
                              feats_per_doc=feats_per_doc)
