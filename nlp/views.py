@@ -3,14 +3,14 @@ import numpy
 
 from . import clusters, features
 from .config import appconf
-from .data import CorpusMatrix
+from .data import DataFolder
 
 
 def kmeans_clust(path, k: int = 10):
     """ Given a corpus and the number of groups (k), returns a kmeans cluster.
     """
 
-    # data = CorpusMatrix(path=path)
+    # data = DataFolder(path=path)
     # data()
     features.set_corpus(path)
     allwords, articlewords, articletitles = features.get_words()
@@ -113,7 +113,7 @@ def features_and_docs(path: str = None,
                       feats_per_doc: int = 3):
     """ Returning features and docs. This method will compute all the matrices. """
 
-    data = CorpusMatrix(path=path, featcount=feats, corpusid=corpusid)
+    data = DataFolder(path=path, featcount=feats, corpusid=corpusid)
     data()
     available_feats = data.available_feats
     try:
@@ -139,6 +139,6 @@ def call_factorize(path: str = None,
                    docs_per_feat: int = 3,
                    feats_per_doc: int = 3):
     """ This function is called to factorize matrices, given a features number. """
-    data = CorpusMatrix(path=path, featcount=feats, corpusid=corpusid)
+    data = DataFolder(path=path, featcount=feats, corpusid=corpusid)
     data.call_factorize()
     return True

@@ -13,8 +13,10 @@ import numpy
 import requests
 
 from . import features
-from .config.appconf import MATRIX_FOLDER, NMF_ENDPOINT, TEXT_FOLDER
+from .config.appconf import (DATA_FOLDER, MATRIX_FOLDER, NMF_ENDPOINT,
+                             TEXT_FOLDER)
 from .errors import MatrixFileDoesNotExist
+from .emit import extract_features
 from .word_count import get_words
 
 MATRIX_FILES = [
@@ -51,7 +53,7 @@ KMEANS_FILES = [
 ]
 
 
-class CorpusMatrix(object):
+class DataFolder(object):
 
     @property
     def allwords(self):
@@ -134,6 +136,8 @@ class CorpusMatrix(object):
                  corpusid: str = None):
         """
         """
+        if not path:
+            path = os.path.join(DATA_FOLDER, corpusid)
         path = os.path.abspath(path)
         if not os.path.isdir(path):
             self.make_corpus_dir(path)
@@ -147,7 +151,6 @@ class CorpusMatrix(object):
 
         if not os.path.isdir(text_path):
             self.mkdir_corpus()
-            # raise RuntimeError(corpus_path)
 
         # setting up the path to the corpus on the level of features module.
         features.set_corpus(self.path['text'])
@@ -171,7 +174,12 @@ class CorpusMatrix(object):
         self.__factorize()
 
     def feat_weights_path(self, create: bool = False):
-
+        """
+        Returns the path of the folder that holds matrices containing features
+        weights.
+        :param create:
+        :return:
+        """
         path = os.path.normpath(
             os.path.join(
                 self.path['matrix'], 'wf', str(self.featcount)
@@ -355,6 +363,21 @@ class CorpusMatrix(object):
             self.chmod_fd(os.path.join(path, _))
 
     def __factorize(self) -> None:
+        """
+
+        :return:
+        """
+        ftype = 'vectors'
+
+        extract_features(
+            containerid=self.corpusid,
+            feature_number=self.featcount,
+            matrix_path=f'{self.file_path(ftype)}.{FILE_EXTENSIONS[ftype]}',
+            target_path=self.feat_weights_path(create=True),
+            path=self.path.get('path')
+        )
+
+    def __factorize_deppr(self) -> None:
         """
         Factorize the matrix using rmxnmf - which is an external service.
         :return:

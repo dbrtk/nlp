@@ -17,6 +17,8 @@ RUN python -m nltk.downloader -d /data/nltk_data stopwords wordnet averaged_perc
 
 ENV NLTK_DATA_PATH '/data/nltk_data'
 
+ENV DATA_FOLDER '/data/container'
+
 ENV REDIS_HOST_NAME 'redis'
 
 # Endpoint of the service that does NMF

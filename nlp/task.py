@@ -2,7 +2,7 @@
 from .app import celery
 from .config.appconf import CELERY_TIME_LIMIT
 from .config.celeryconf import RMXBOT_TASKS
-from .data import CorpusMatrix
+from .data import DataFolder
 from .integrity_check import IntegrityCheck
 from .views import call_factorize, features_and_docs
 
@@ -78,7 +78,7 @@ def integrity_check(self, corpusid: str = None, path: str = None):
 def available_features(corpusid: str = None, path: str = None):
     """returns available features for a corpusid and a corpus path"""
 
-    return CorpusMatrix(corpusid=corpusid, path=path).available_feats
+    return DataFolder(corpusid=corpusid, path=path).available_feats
 
 
 @celery.task(time_limit=CELERY_TIME_LIMIT)
@@ -105,3 +105,17 @@ def get_features_and_docs(path: str = None,
                              words=words,
                              docs_per_feat=docs_per_feat,
                              feats_per_doc=feats_per_doc)
+
+
+@celery.task
+def feat_integrity_check(path: str, containerid: str, feature_number: int):
+    """
+
+    :param path:
+    :param containerid:
+    :param feature_number:
+    :return:
+    """
+    inst = DataFolder(corpusid=containerid, path=path, featcount=feature_number)
+    inst.check_wf_folder_structure()
+

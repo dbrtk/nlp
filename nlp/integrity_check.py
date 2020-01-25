@@ -4,7 +4,7 @@ import shutil
 from typing import List
 
 from .config.appconf import TEXT_FOLDER
-from .data import CorpusMatrix
+from .data import DataFolder
 from .errors import MatrixFileDoesNotExist
 from .word_count import CorpusDir, process_lemma_word
 from .views import call_factorize
@@ -22,7 +22,7 @@ class IntegrityCheck(object):
 
         self.doc_file_id = self.get_docids()
 
-        self.matrix_data = CorpusMatrix(corpusid=corpusid, path=path)
+        self.matrix_data = DataFolder(corpusid=corpusid, path=path)
 
         self.computed_feats = self.matrix_data.available_feats
 
