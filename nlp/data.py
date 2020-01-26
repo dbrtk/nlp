@@ -1,20 +1,16 @@
 
 import glob
-import io
 import json
 import os
 import pathlib
 import pickle
 import shutil
 import stat
-import zipfile
 
 import numpy
-import requests
 
 from . import features
-from .config.appconf import (DATA_FOLDER, MATRIX_FOLDER, NMF_ENDPOINT,
-                             TEXT_FOLDER)
+from .config.appconf import DATA_FOLDER, MATRIX_FOLDER, TEXT_FOLDER
 from .errors import MatrixFileDoesNotExist
 from .emit import extract_features
 from .word_count import get_words
@@ -364,6 +360,7 @@ class DataFolder(object):
 
     def __factorize(self) -> None:
         """
+        Factorize the matrix using rmxnmf - which is an external service.
 
         :return:
         """
@@ -376,29 +373,6 @@ class DataFolder(object):
             target_path=self.feat_weights_path(create=True),
             path=self.path.get('path')
         )
-
-    def __factorize_deppr(self) -> None:
-        """
-        Factorize the matrix using rmxnmf - which is an external service.
-        :return:
-        """
-        if not isinstance(self.featcount, int):
-            raise ValueError(self.featcount)
-        ftype = 'vectors'
-        resp = requests.post(
-            f'{NMF_ENDPOINT}/features/{self.featcount}',
-            files={'file': open(
-                f'{self.file_path(ftype)}.{FILE_EXTENSIONS[ftype]}',
-                'rb'
-            )}
-        )
-        zf = zipfile.ZipFile(
-            io.BytesIO(resp.content), "a", zipfile.ZIP_DEFLATED, False)
-        zf.extractall(self.feat_weights_path(create=True))
-        del zf
-        del resp
-        self.chmod_wf()
-        self.check_wf_folder_structure()
 
     def _matrix_files(self):
         return glob.glob(os.path.normpath(

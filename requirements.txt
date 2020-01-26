@@ -10,6 +10,4 @@ redis
 
 pytest
 
-requests
-
 Pillow

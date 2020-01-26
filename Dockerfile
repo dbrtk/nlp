@@ -21,7 +21,5 @@ ENV DATA_FOLDER '/data/container'
 
 ENV REDIS_HOST_NAME 'redis'
 
-# Endpoint of the service that does NMF
-ENV NMF_ENDPOINT 'http://rmxnmf:8006'
 
 
