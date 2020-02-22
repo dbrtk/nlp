@@ -19,7 +19,7 @@ ENV NLTK_DATA_PATH '/data/nltk_data'
 
 ENV DATA_FOLDER '/data/container'
 
-ENV REDIS_HOST_NAME 'redis'
+ENV BROKER_HOST_NAME 'rabbitmq'
 
 
 

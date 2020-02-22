@@ -1,7 +1,7 @@
 
 import os
 
-REDIS_HOST_NAME = os.environ.get('REDIS_HOST_NAME')
+BROKER_HOST_NAME = os.environ.get('BROKER_HOST_NAME')
 
 # nltk confiigs
 NLTK_DATA_PATH = os.environ.get('NLTK_DATA_PATH')
