@@ -19,7 +19,7 @@ ENV NLTK_DATA_PATH '/data/nltk_data'
 
 ENV DATA_FOLDER '/data/container'
 
-ENV BROKER_HOST_NAME 'rabbitmq'
+ENV BROKER_HOST_NAME 'message_broker'
 
 
 
