@@ -128,7 +128,8 @@ class DataFolder(object):
         self.featcount = old_fcount
         return out
 
-    def __init__(self, path: str = None, featcount: int = None,
+    def __init__(self, path: str = None,
+                 featcount: int = 10,
                  corpusid: str = None):
         """
         """
@@ -392,3 +393,15 @@ class DataFolder(object):
                 os.remove(item)
 
     def purge_matrix(self): return shutil.rmtree(self.path.get('matrix'))
+
+    def kmeans_files(self):
+        """returns file paths for the k-means cluster"""
+
+        return {
+            'wordmatrix': "{}.{}".format(
+                self.file_path(filename='wordmatrix'),
+                FILE_EXTENSIONS['wordmatrix']),
+            'doctitles': "{}.{}".format(
+                self.file_path(filename='doctitles'),
+                FILE_EXTENSIONS['doctitles'])
+        }

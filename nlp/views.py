@@ -2,22 +2,17 @@
 import numpy
 
 from . import clusters, features
-from .config import appconf
 from .data import DataFolder
 
 
-def kmeans_clust(path, k: int = 10):
-    """ Given a corpus and the number of groups (k), returns a kmeans cluster.
+def kmeans_clust(containerid, path, k: int = 10):
     """
-
-    # data = DataFolder(path=path)
-    # data()
-    features.set_corpus(path)
-    allwords, articlewords, articletitles = features.get_words()
-    wordmatrix, wordvec = features.makematrix(allwords, articlewords)
-
+    Given a container and the number of groups (k), returns data for a kmeans
+    cluster.
+    """
+    inst = DataFolder(corpusid=containerid, path=path, featcount=k)
     return clusters.get_clusters(
-        clusters.kcluster(wordmatrix, k=k), articletitles)
+        clusters.kcluster(inst.wordmatrix, k=k), inst.doctitles)
 
 
 def features_to_json(weights, features, titles, wordvec, feature_words: int = 6,

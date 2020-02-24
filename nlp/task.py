@@ -4,7 +4,7 @@ from .config.appconf import CELERY_TIME_LIMIT
 from .config.celeryconf import RMXBOT_TASKS
 from .data import DataFolder
 from .integrity_check import IntegrityCheck
-from .views import call_factorize, features_and_docs
+from .views import call_factorize, features_and_docs, kmeans_clust
 
 
 @celery.task
@@ -118,3 +118,25 @@ def feat_integrity_check(path: str, containerid: str, feature_number: int):
     inst = DataFolder(corpusid=containerid, path=path, featcount=feature_number)
     inst.check_wf_folder_structure()
 
+
+@celery.task
+def kmeans_cluster(containerid: str = None, path: str = None, k: int = 10):
+    """
+
+    :param containerid:
+    :param path:
+    :param k:
+    :return:
+    """
+    return kmeans_clust(containerid, path, k)
+
+
+@celery.task
+def kmeans_files(containerid: str = None, path: str = None):
+    """
+
+    :param containerid:
+    :param path:
+    :return:
+    """
+    return DataFolder(corpusid=containerid, path=path).kmeans_files()
