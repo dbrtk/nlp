@@ -3,9 +3,6 @@ from .appconf import BROKER_HOST_NAME
 BROKER_URL = 'redis://{}:6379/0'.format(BROKER_HOST_NAME)
 CELERY_RESULT_BACKEND = 'redis://{}:6379/0'.format(BROKER_HOST_NAME)
 
-# BROKER_URL = f"amqp://rmxuser:rmxpass@{BROKER_HOST_NAME}:5672/rmxvhost"
-# CELERY_RESULT_BACKEND = 'rpc://'
-
 CELERY_IMPORTS = ('nlp.task', )
 
 CELERY_TASK_RESULT_EXPIRES = 30
