@@ -18,3 +18,5 @@ MATRIX_FOLDER = 'matrix'
 # settings for the endpoint that implements non-negative matrix factorization
 NMF_ENDPOINT = os.environ.get('NMF_ENDPOINT')
 
+# celery, redis (auth access) configuration
+REDIS_PASS = os.environ.get('REDIS_PASS')
