@@ -1,13 +1,10 @@
-
 numpy
 
 nltk
 langdetect
 pycountry
 
+pymongo
 celery
-redis
-
-pytest
 
 Pillow
