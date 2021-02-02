@@ -21,5 +21,3 @@ ENV DATA_FOLDER '/data/container'
 
 ENV BROKER_HOST_NAME 'message_broker'
 
-
-
