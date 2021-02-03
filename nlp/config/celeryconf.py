@@ -12,7 +12,6 @@ result_backend = "rpc://"
 
 result_persistent = True
 
-
 imports = ('nlp.task', )
 
 result_expires = 30
