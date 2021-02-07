@@ -12,8 +12,6 @@ RUN pip install -U pip && pip install -e .
 # creating a directory that will contain nltk_data
 RUN mkdir /data
 
-VOLUME /data/nltk_data
-
 # Download resources for nltk
 RUN python -m nltk.downloader -d /data/nltk_data stopwords wordnet averaged_perceptron_tagger punkt
 
