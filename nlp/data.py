@@ -128,17 +128,18 @@ class DataFolder(object):
         self.featcount = old_fcount
         return out
 
-    def __init__(self, path: str = None,
+    def __init__(self,
+                 path: str = None,
                  featcount: int = 10,
-                 corpusid: str = None):
+                 containerid: str = None):
         """
         """
         if not path:
-            path = os.path.join(DATA_FOLDER, corpusid)
+            path = os.path.join(DATA_FOLDER, containerid)
         path = os.path.abspath(path)
         if not os.path.isdir(path):
             self.make_corpus_dir(path)
-        self.corpusid = corpusid
+        self.containerid = containerid
         self.featcount = featcount
 
         matrix_path = os.path.normpath(os.path.join(path, MATRIX_FOLDER))
@@ -368,7 +369,7 @@ class DataFolder(object):
         ftype = 'vectors'
 
         extract_features(
-            containerid=self.corpusid,
+            containerid=self.containerid,
             feature_number=self.featcount,
             matrix_path=f'{self.file_path(ftype)}.{FILE_EXTENSIONS[ftype]}',
             target_path=self.feat_weights_path(create=True),

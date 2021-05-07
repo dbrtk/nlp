@@ -12,17 +12,17 @@ from .views import call_factorize
 
 class IntegrityCheck(object):
 
-    def __init__(self, corpusid: str = None, path: str = None):
+    def __init__(self, containerid: str = None, path: str = None):
 
         if not os.path.isdir(path):
             raise ValueError(path)
 
         self.path = path
-        self.corpusid = corpusid
+        self.corpusid = containerid
 
         self.doc_file_id = self.get_docids()
 
-        self.matrix_data = DataFolder(corpusid=corpusid, path=path)
+        self.matrix_data = DataFolder(containerid=containerid, path=path)
 
         self.computed_feats = self.matrix_data.available_feats
 

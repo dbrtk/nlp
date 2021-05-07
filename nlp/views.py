@@ -10,7 +10,7 @@ def kmeans_clust(containerid, path, k: int = 10):
     Given a container and the number of groups (k), returns data for a kmeans
     cluster.
     """
-    inst = DataFolder(corpusid=containerid, path=path, featcount=k)
+    inst = DataFolder(containerid=containerid, path=path, featcount=k)
     return clusters.get_clusters(
         clusters.kcluster(inst.wordmatrix, k=k), inst.doctitles)
 
@@ -108,7 +108,7 @@ def features_and_docs(path: str = None,
                       feats_per_doc: int = 3) -> (None, tuple):
     """ Returning features and docs. This method will compute all the matrices. """
 
-    data = DataFolder(path=path, featcount=feats, corpusid=containerid)
+    data = DataFolder(path=path, featcount=feats, containerid=containerid)
     data()
     available_feats = data.available_feats
     try:
@@ -135,6 +135,6 @@ def call_factorize(path: str = None,
                    docs_per_feat: int = 3,
                    feats_per_doc: int = 3):
     """ This function is called to factorize matrices, given a features number. """
-    data = DataFolder(path=path, featcount=feats, corpusid=corpusid)
+    data = DataFolder(path=path, featcount=feats, containerid=corpusid)
     data.call_factorize()
     return True

@@ -37,7 +37,7 @@ task_routes = {
     'rmxnmf.task.*': {'queue': 'rmxnmf'},
 }
 
-RMXBOT_TASKS = {
+RMXWEB_TASKS = {
 
     'nlp_callback': 'rmxbot.tasks.container.nlp_callback_success',
 

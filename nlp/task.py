@@ -1,7 +1,7 @@
 
 from .app import celery
 from .config.appconf import CELERY_TIME_LIMIT
-from .config.celeryconf import RMXBOT_TASKS
+from .config.celeryconf import RMXWEB_TASKS
 from .data import DataFolder
 from .integrity_check import IntegrityCheck
 from .views import call_factorize, features_and_docs, kmeans_clust
@@ -38,7 +38,7 @@ def factorize_matrices(corpusid: str = None,
         out['error'] = True
         return out
 
-    celery.send_task(RMXBOT_TASKS['nlp_callback'], kwargs={
+    celery.send_task(RMXWEB_TASKS['nlp_callback'], kwargs={
         'corpusid': corpusid,
         'feats': feats
     })
@@ -56,7 +56,7 @@ def compute_matrices(self, **kwds):
         docs_per_feat=kwds.get('docs_per_feat'),
         feats_per_doc=kwds.get('feats_per_doc')
     )
-    celery.send_task(RMXBOT_TASKS['nlp_callback'], kwargs={
+    celery.send_task(RMXWEB_TASKS['nlp_callback'], kwargs={
         'corpusid': kwds.get('corpusid'),
         'feats': kwds.get('feats')
     })
@@ -64,13 +64,13 @@ def compute_matrices(self, **kwds):
 
 
 @celery.task(bind=True, time_limit=CELERY_TIME_LIMIT)
-def integrity_check(self, corpusid: str = None, path: str = None):
+def integrity_check(self, containerid: str = None, path: str = None):
 
-    check = IntegrityCheck(corpusid=corpusid, path=path)
+    check = IntegrityCheck(containerid=containerid, path=path)
     check()
 
-    celery.send_task(RMXBOT_TASKS['integrity_check_callback'], kwargs={
-        'corpusid': corpusid
+    celery.send_task(RMXWEB_TASKS['integrity_check_callback'], kwargs={
+        'containerid': containerid
     })
 
 
@@ -78,13 +78,13 @@ def integrity_check(self, corpusid: str = None, path: str = None):
 def available_features(corpusid: str = None, path: str = None):
     """returns available features for a corpusid and a corpus path"""
 
-    return DataFolder(corpusid=corpusid, path=path).available_feats
+    return DataFolder(containerid=corpusid, path=path).available_feats
 
 
 @celery.task(time_limit=CELERY_TIME_LIMIT)
 def get_features_and_docs(path: str = None,
                           feats: int = 25,
-                          corpusid: str = None,
+                          containerid: str = None,
                           words: int = 6,
                           docs_per_feat: int = 3,
                           feats_per_doc: int = 3):
@@ -92,7 +92,7 @@ def get_features_and_docs(path: str = None,
     it's a celery task that wraps views.features_and_docs
     :param path: path to corpus
     :param feats: number of features
-    :param corpusid: corpus id
+    :param containerid: container id
     :param words: number of words per feature
     :param docs_per_feat: documents per feature
     :param feats_per_doc: features per document
@@ -100,7 +100,7 @@ def get_features_and_docs(path: str = None,
     """
     return features_and_docs(path=path,
                              feats=feats,
-                             containerid=corpusid,
+                             containerid=containerid,
                              words=words,
                              docs_per_feat=docs_per_feat,
                              feats_per_doc=feats_per_doc)
@@ -115,7 +115,7 @@ def feat_integrity_check(path: str, containerid: str, feature_number: int):
     :param feature_number:
     :return:
     """
-    inst = DataFolder(corpusid=containerid, path=path, featcount=feature_number)
+    inst = DataFolder(containerid=containerid, path=path, featcount=feature_number)
     inst.check_wf_folder_structure()
 
 
@@ -139,4 +139,4 @@ def kmeans_files(containerid: str = None, path: str = None):
     :param path:
     :return:
     """
-    return DataFolder(corpusid=containerid, path=path).kmeans_files()
+    return DataFolder(containerid=containerid, path=path).kmeans_files()
